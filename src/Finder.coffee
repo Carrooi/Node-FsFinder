@@ -1,5 +1,5 @@
 fs = require 'fs'
-path = require 'path'
+_path = require 'path'
 moment = require 'moment'
 
 class Finder
@@ -20,7 +20,7 @@ class Finder
 
 
 	constructor: (directory) ->
-		directory = path.resolve(directory)
+		directory = _path.resolve(directory)
 		@directory = directory
 
 
