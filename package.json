@@ -1,0 +1,24 @@
+{
+	"name": "fs-finder",
+	"description": "File system recursive finder",
+	"version": "1.0.0",
+	"author": {
+		"name": "David Kudera",
+		"email": "sakren@gmail.com"
+	},
+	"keywords": [
+		"file",
+		"fs",
+		"finder",
+		"recursive",
+		"walk"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:sakren/fs-finder.git"
+	},
+	"engines": {
+		"node": "*"
+	},
+	"main": "./lib/Finder.js"
+}
