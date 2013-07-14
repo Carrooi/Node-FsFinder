@@ -20,5 +20,8 @@
 	"engines": {
 		"node": "*"
 	},
-	"main": "./lib/Finder.js"
+	"main": "./lib/Finder.js",
+	"dependencies": {
+		"moment": "2.1.0"
+	}
 }
