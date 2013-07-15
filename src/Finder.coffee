@@ -112,6 +112,42 @@ class Finder
 		return @find(mask, 'directories')
 
 
+	@find: (path, type = 'all') ->
+		path = @parseDirectory(path)
+		return (new Finder(path.directory)).recursively().find(path.mask, type)
+
+
+	@findFiles: (path) ->
+		return Finder.find(path, 'files')
+
+
+	@findDirectories: (path) ->
+		return Finder.find(path, 'directories')
+
+
+	@parseDirectory: (path) ->
+		mask = null
+		asterisk = path.indexOf('*')
+		regexp = path.indexOf('<')
+
+		if asterisk != -1 || regexp != -1
+			if asterisk == -1 || (asterisk != -1 && regexp != -1 && asterisk > regexp)
+				splitter = regexp
+			else if regexp == -1 || (regexp != -1 && asterisk != -1 && asterisk <= regexp)
+				splitter = asterisk
+
+			mask = path.substr(splitter)
+			path = path.substr(0, splitter)
+
+			mask = mask.replace(/<|>/g, '')
+			path = path.replace(/<|>/g, '')
+
+		return {
+			directory: path
+			mask: mask
+		}
+
+
 	@compare: (l, operator, r) ->
 		switch operator
 			when '>' then return l > r

@@ -95,3 +95,21 @@ var files = finder.recursively().filter(filter).findFiles();
 Returns all files if actual time is any hour with 42 minutes.
 Custom filters are annonymous function with stat file object parameter ([documentation](http://nodejs.org/api/fs.html#fs_class_fs_stats))
 and file name.
+
+## Shortcuts
+
+If you want to look for files or directories recursively without any filters, you can use shorter way.
+
+```
+var Finder = require('fs-finder');
+
+var files = Finder.findFiles('/var/data/base-path/*js');				// Returns files
+var directories = Finder.findDirectories('/var/data/base-path');		// Returns directories
+var paths = Finder.find('/var/data/base-path');							// Returns files and directories
+```
+
+Only different thing are regular expressions. They have to be enclosed in <>.
+
+```
+var files = Finder.findFiles('/var/data/base-path/<(.git|.idea)*[0-9]>');		// Returns every file with .git or .idea and also with number in path
+```
