@@ -113,3 +113,10 @@ Only different thing are regular expressions. They have to be enclosed in <>.
 ```
 var files = Finder.findFiles('/var/data/base-path/<(.git|.idea)*[0-9]>');		// Returns every file with .git or .idea and also with number in path
 ```
+
+For more advanced options you can use in and from functions.
+
+```
+var files = Finder.in('/var/data/base-path').findFiles();		// Load files only from base-path directory
+var files = Finder.from('/var/data/base-path').findFiles();		// Load files recursively
+```

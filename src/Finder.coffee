@@ -112,6 +112,14 @@ class Finder
 		return @find(mask, 'directories')
 
 
+	@in: (path) ->
+		return new Finder(path)
+
+
+	@from: (path) ->
+		return (new Finder(path)).recursively()
+
+
 	@find: (path, type = 'all') ->
 		path = @parseDirectory(path)
 		return (new Finder(path.directory)).recursively().find(path.mask, type)
