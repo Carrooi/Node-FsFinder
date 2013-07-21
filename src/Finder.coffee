@@ -5,7 +5,9 @@ moment = require 'moment'
 class Finder
 
 
-	@ASTERISK_PATTERN = '[0-9a-zA-Z/.-_ ]+'
+	@ASTERISK_PATTERN = '<[0-9a-zA-Z/.-_ ]+>'
+
+	@ESCAPE_PATTERN = ['.', '[', ']', '\\', '^', '$', '|', '?', '+', '(', ')', '{', '}']
 
 	@TIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
@@ -17,6 +19,8 @@ class Finder
 	excludes: []
 
 	filters: []
+
+	systemFiles: false
 
 
 	constructor: (directory) ->
@@ -33,9 +37,9 @@ class Finder
 
 		result = []
 		for exclude in excludes
-			result.push(exclude.replace(/\*/g, Finder.ASTERISK_PATTERN))
+			result.push(Finder.normalizePattern(exclude))
 
-		@excludes = result
+		@excludes = @excludes.concat(result)
 		return @
 
 
@@ -60,13 +64,17 @@ class Finder
 		return @
 
 
+	showSystemFiles: (show = true) ->
+		@systemFiles = show
+		return @
+
+
 	filter: (fn) ->
 		@filters.push(fn)
 		return @
 
 
 	getPaths: (dir, type = 'all', mask = null) ->
-		if mask != null then mask = mask.replace(/\*/g, Finder.ASTERISK_PATTERN)
 		paths = []
 
 		for path in fs.readdirSync(dir)
@@ -101,6 +109,8 @@ class Finder
 
 
 	find: (mask = null, type = 'all') ->
+		mask = Finder.normalizePattern(mask)
+		if @systemFiles == false then @exclude(['<~$>', '<^\\.>'])
 		return @getPaths(@directory, type, mask)
 
 
@@ -147,9 +157,6 @@ class Finder
 			mask = path.substr(splitter)
 			path = path.substr(0, splitter)
 
-			mask = mask.replace(/<|>/g, '')
-			path = path.replace(/<|>/g, '')
-
 		return {
 			directory: path
 			mask: mask
@@ -164,7 +171,39 @@ class Finder
 			when '<=' then return l <= r
 			when '=', '==' then return l == r
 			when '!', '!=', '<>' then return l != r
-			else throw new Error 'Unknown operator ' + operator + '.'
+			else throw new Error 'Unknown operator ' + operator + '.', '^.'
+
+
+	@normalizePattern: (pattern) ->
+		if pattern == null
+			return null
+
+		if pattern == '*'
+			return null
+
+		pattern = pattern.replace(/\*/g, Finder.ASTERISK_PATTERN)
+		parts = pattern.match(/<((?!(<|>)).)*>/g)
+		if parts != null
+			partsResult = {}
+			for part, i in parts
+				partsResult['::' + i + '::'] = part.replace(/^<(.*)>$/, '$1')
+				pattern = pattern.replace(part, '::' + i + '::')
+
+			pattern = Finder.escapeForRegex(pattern)
+
+			for replacement, part of partsResult
+				pattern = pattern.replace(replacement, part)
+		else
+			pattern = Finder.escapeForRegex(pattern)
+
+		return pattern
+
+
+	@escapeForRegex: (text) ->
+		replace = []
+		replace.push('\\' + char) for char in Finder.ESCAPE_PATTERN
+
+		return text.replace(new RegExp('(' + replace.join('|') + ')', 'g'), '\\$1')
 
 
 module.exports = Finder

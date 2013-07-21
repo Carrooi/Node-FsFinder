@@ -43,8 +43,10 @@ var files = finder.recursively().findFiles('*.coffee');
 In this example fs finder looks for all files in base directories recursively with '.coffee' in their name.
 Asterisk is just shortcut for regexp '[0-9a-zA-Z/.-_ ]+' so you can also use regexp in mask.
 
+Only thing what you have to do, is enclose your regex into <>.
+
 ```
-var files = finder.recursively().findFiles('temp/[0-9]+.tmp');		// files in temp directories with numbers in name and .tmp extension
+var files = finder.recursively().findFiles('temp/<[0-9]+>.tmp');		// files in temp directories with numbers in name and .tmp extension
 ```
 
 ## Excluding
@@ -96,6 +98,16 @@ Returns all files if actual time is any hour with 42 minutes.
 Custom filters are annonymous function with stat file object parameter ([documentation](http://nodejs.org/api/fs.html#fs_class_fs_stats))
 and file name.
 
+## System and temp files
+
+In default, fs-finder ignoring temp files, which are created for example by gedit editor and which have got ~ character
+in the end of file name.
+
+```
+var files = finder.showSystemFiles(true).findFiles()
+var files = finder.showSystemFiles(false).findFiles()
+```
+
 ## Shortcuts
 
 If you want to look for files or directories recursively without any filters, you can use shorter way.
@@ -107,8 +119,6 @@ var files = Finder.findFiles('/var/data/base-path/*js');				// Returns files
 var directories = Finder.findDirectories('/var/data/base-path');		// Returns directories
 var paths = Finder.find('/var/data/base-path');							// Returns files and directories
 ```
-
-Only different thing are regular expressions. They have to be enclosed in <>.
 
 ```
 var files = Finder.findFiles('/var/data/base-path/<(.git|.idea)*[0-9]>');		// Returns every file with .git or .idea and also with number in path
