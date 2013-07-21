@@ -100,8 +100,8 @@ and file name.
 
 ## System and temp files
 
-In default, fs-finder ignoring temp files, which are created for example by gedit editor and which have got ~ character
-in the end of file name.
+In default, fs-finder ignoring temp and system files, which are created for example by gedit editor and which have got ~ character
+in the end of file name or dot in the beginning.
 
 ```
 var files = finder.showSystemFiles(true).findFiles()
