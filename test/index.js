@@ -1,0 +1,5 @@
+(function () {
+
+	require('./Finder.js');
+
+})();

@@ -1,6 +1,10 @@
 # fs-finder
 file system finder inspired by finder in [Nette framework](http://doc.nette.org/en/finder).
 
+## Changelog
+
+Changelog is in the bottom of this readme.
+
 ## Installing
 
 ```
@@ -130,3 +134,35 @@ For more advanced options you can use in and from functions.
 var files = Finder.in('/var/data/base-path').findFiles();		// Load files only from base-path directory
 var files = Finder.from('/var/data/base-path').findFiles();		// Load files recursively
 ```
+
+## Changelog
+
+* 1.5.0
+	+ Added changelog
+
+* 1.4.3
+	+ Added MIT license
+
+* 1.4.2
+	+ Renamed repository from fs-finder to node-fs-finder
+
+* 1.4.1
+	+ Type in readme
+
+* 1.4.0
+	+ Every regexp must be enclosed in <> (before this, dots meens everything, not dot)
+	+ Every character, which does mean something in regexp and is not in <>, is escaped
+
+* 1.3.0 (it seems that I skiped this version, sorry)
+
+* 1.2.0
+	+ Added in, from methods
+
+* 1.1.0
+	+ Added shortcuts "static" methods
+
+* 1.0.1
+	+ Some bug in combination with [simq](https://npmjs.org/package/simq)
+
+* 1.0.0
+	+ Initial commit
