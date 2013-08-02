@@ -137,6 +137,9 @@ var files = Finder.from('/var/data/base-path').findFiles();		// Load files recur
 
 ## Changelog
 
+* 1.5.1
+	+ Compare function replaced with [operation-compare](https://npmjs.org/package/operator-compare)
+
 * 1.5.0
 	+ Added changelog
 	+ Created tests (npm test)

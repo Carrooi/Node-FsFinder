@@ -1,6 +1,7 @@
 fs = require 'fs'
 _path = require 'path'
 moment = require 'moment'
+compare = require 'operator-compare'
 
 class Finder
 
@@ -45,7 +46,7 @@ class Finder
 
 	size: (operation, value) ->
 		@filter( (stat) ->
-			return Finder.compare(stat.size, operation, value)
+			return compare(stat.size, operation, value)
 		)
 
 		return @
@@ -58,7 +59,7 @@ class Finder
 				when '[object Object]' then date = moment().subtract(value)
 				else throw new Error 'Date format is not valid.'
 
-			return Finder.compare((new Date(stat.mtime)).getTime(), operation, date.valueOf())
+			return compare((new Date(stat.mtime)).getTime(), operation, date.valueOf())
 		)
 
 		return @
@@ -164,17 +165,6 @@ class Finder
 			directory: path
 			mask: mask
 		}
-
-
-	@compare: (l, operator, r) ->
-		switch operator
-			when '>' then return l > r
-			when '>=' then return l >= r
-			when '<' then return l < r
-			when '<=' then return l <= r
-			when '=', '==' then return l == r
-			when '!', '!=', '<>' then return l != r
-			else throw new Error 'Unknown operator ' + operator + '.', '^.'
 
 
 	@normalizePattern: (pattern) ->
