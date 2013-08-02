@@ -139,6 +139,8 @@ var files = Finder.from('/var/data/base-path').findFiles();		// Load files recur
 
 * 1.5.0
 	+ Added changelog
+	+ Created tests (npm test)
+	+ Repaired bugs with hidding system and temp files
 
 * 1.4.3
 	+ Added MIT license

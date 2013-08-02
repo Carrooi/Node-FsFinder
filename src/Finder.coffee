@@ -88,6 +88,10 @@ class Finder
 
 			if ok == false then continue
 
+			if @systemFiles == false
+				if _path.basename(path)[0] == '.' then continue
+				if path.match(/~$/) != null then continue
+
 			stat = fs.statSync(path)
 
 			if type == 'all' || (type == 'files' && stat.isFile()) || (type == 'directories' && stat.isDirectory())
@@ -110,7 +114,6 @@ class Finder
 
 	find: (mask = null, type = 'all') ->
 		mask = Finder.normalizePattern(mask)
-		if @systemFiles == false then @exclude(['<~$>', '<^\\.>'])
 		return @getPaths(@directory, type, mask)
 
 
