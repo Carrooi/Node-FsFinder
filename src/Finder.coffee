@@ -23,9 +23,14 @@ class Finder
 
 	systemFiles: false
 
+	up: false
+
 
 	constructor: (directory) ->
 		directory = _path.resolve(directory)
+		if !fs.statSync(directory).isDirectory()
+			throw new Error "Path #{directory} is not directory"
+
 		@directory = directory
 
 
@@ -65,8 +70,11 @@ class Finder
 		return @
 
 
-	showSystemFiles: (show = true) ->
-		@systemFiles = show
+	showSystemFiles: (@systemFiles = true) ->
+		return @
+
+
+	lookUp: (@up = true) ->
 		return @
 
 
@@ -113,9 +121,27 @@ class Finder
 		return paths
 
 
+	getPathsFromParents: (mask = null, type = 'all') ->
+		directory = @directory
+		depth = if @up == true then directory.match(/\//g).length else @up - 1
+		paths = @getPaths(directory, type, mask)
+		@exclude(directory)
+
+		for i in [0..depth - 1]
+			directory = _path.dirname(directory)
+			paths = paths.concat(@getPaths(directory, type, mask))
+			@exclude(directory)
+
+		return paths
+
+
 	find: (mask = null, type = 'all') ->
 		mask = Finder.normalizePattern(mask)
-		return @getPaths(@directory, type, mask)
+
+		if @up is on or typeof @up == 'number'
+			return @getPathsFromParents(mask, type)
+		else
+			return @getPaths(@directory, type, mask)
 
 
 	findFiles: (mask = null) ->

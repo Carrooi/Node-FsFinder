@@ -112,6 +112,22 @@ var files = finder.showSystemFiles(true).findFiles()
 var files = finder.showSystemFiles(false).findFiles()
 ```
 
+## Look in parent directories
+
+Finder can also look for files in parent directories. There is used `exclude` method, so directories in which were your
+files already searched, will not be opened for searching again in their next parent directory.
+
+Keep in mind that one of parent directories is also your disk root directory, so you can set depth of count of these parents.
+
+Of course, you can combine it with other methods, even with `recursive`.
+
+```
+var files = finder.lookUp().findFiles('5.log');
+
+// or set depth
+var files = finder.lookUp(3).findFiles('5.log');
+```
+
 ## Shortcuts
 
 If you want to look for files or directories recursively without any filters, you can use shorter way.
@@ -140,7 +156,6 @@ var files = Finder.from('/var/data/base-path').findFiles();		// Load files recur
 * 1.6.0
 	+ New reporter for tests
 	+ Tests rewritten to coffeescript
-	+ Added `first` option
 	+ Added `lookUp` option
 	+ Typos in readme
 

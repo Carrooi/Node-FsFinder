@@ -15,6 +15,13 @@
   finder = new Finder(dir);
 
   describe('Finder', function() {
+    describe('base', function() {
+      return it('should throw an error if path is not directory', function() {
+        return (function() {
+          return new finder("" + dir + "/two");
+        }).should["throw"]();
+      });
+    });
     describe('#findFiles()', function() {
       return it('should return file names from root folder', function() {
         return finder.findFiles().should.eql(["" + dir + "/0", "" + dir + "/1", "" + dir + "/five", "" + dir + "/one", "" + dir + "/three", "" + dir + "/two"]);
@@ -49,6 +56,14 @@
         finder.showSystemFiles(true);
         finder.findFiles().should.eql(["" + dir + "/.cache", "" + dir + "/0", "" + dir + "/1", "" + dir + "/five", "" + dir + "/five~", "" + dir + "/one", "" + dir + "/three", "" + dir + "/two"]);
         return finder.showSystemFiles(false);
+      });
+    });
+    describe('#lookUp()', function() {
+      it('should return path to file in parent directory', function() {
+        return Finder["in"]("" + dir + "/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js').should.be.eql(["" + dir + "/eight/._.js"]);
+      });
+      return it('should return path to file in parent directory recursively', function() {
+        return Finder.from("" + dir + "/eight/3/4").lookUp(4).findFiles('twelve').should.be.eql(["" + dir + "/seven/twelve"]);
       });
     });
     describe('filters', function() {

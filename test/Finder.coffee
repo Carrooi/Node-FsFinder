@@ -9,6 +9,11 @@ finder = new Finder(dir)
 
 describe 'Finder', ->
 
+	describe 'base', ->
+
+		it 'should throw an error if path is not directory', ->
+			( -> new finder("#{dir}/two") ).should.throw()
+
 	describe '#findFiles()', ->
 
 		it 'should return file names from root folder', ->
@@ -93,6 +98,18 @@ describe 'Finder', ->
 				"#{dir}/two"
 			])
 			finder.showSystemFiles false
+
+	describe '#lookUp()', ->
+
+		it 'should return path to file in parent directory', ->
+			Finder.in("#{dir}/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js').should.be.eql([
+				"#{dir}/eight/._.js"
+			])
+
+		it 'should return path to file in parent directory recursively', ->
+			Finder.from("#{dir}/eight/3/4").lookUp(4).findFiles('twelve').should.be.eql([
+				"#{dir}/seven/twelve"
+			])
 
 	describe 'filters', ->
 
