@@ -1,7 +1,7 @@
 {
 	"name": "fs-finder",
 	"description": "File system recursive finder",
-	"version": "1.5.1",
+	"version": "1.6.0",
 	"author": {
 		"name": "David Kudera",
 		"email": "sakren@gmail.com"
@@ -30,6 +30,6 @@
 		"should": "1.2.2"
 	},
 	"scripts": {
-		"test": "cd ./test; mocha ./index.js;"
+		"test": "cd ./test; mocha ./index.js --reporter spec;"
 	}
 }

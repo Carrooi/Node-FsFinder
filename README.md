@@ -14,7 +14,7 @@ $ npm install fs-finder
 ## Searching files in directory
 
 ```
-var Finder = requrire('fs-finder');
+var Finder = require('fs-finder');
 var finder = new Finder('/var/data/base-path');
 
 var files = finder.findFiles();		// returns array with file's names
@@ -23,13 +23,13 @@ var files = finder.findFiles();		// returns array with file's names
 ## Searching directories
 
 ```
-var directories = finder.findDirectories();		// returns array with directorie's names
+var directories = finder.findDirectories();		// returns array with directories's names
 ```
 
 ## Searching for files and directories
 
 ```
-var paths = finder.find();		// returns array with file's and directorie's names
+var paths = finder.find();		// returns array with file's and directories's names
 ```
 
 ## Recursive searching
@@ -99,7 +99,7 @@ var files = finder.recursively().filter(filter).findFiles();
 ```
 
 Returns all files if actual time is any hour with 42 minutes.
-Custom filters are annonymous function with stat file object parameter ([documentation](http://nodejs.org/api/fs.html#fs_class_fs_stats))
+Custom filters are anonymous function with stat file object parameter ([documentation](http://nodejs.org/api/fs.html#fs_class_fs_stats))
 and file name.
 
 ## System and temp files
@@ -137,13 +137,20 @@ var files = Finder.from('/var/data/base-path').findFiles();		// Load files recur
 
 ## Changelog
 
+* 1.6.0
+	+ New reporter for tests
+	+ Tests rewritten to coffeescript
+	+ Added `first` option
+	+ Added `lookUp` option
+	+ Typos in readme
+
 * 1.5.1
 	+ Compare function replaced with [operation-compare](https://npmjs.org/package/operator-compare)
 
 * 1.5.0
 	+ Added changelog
 	+ Created tests (npm test)
-	+ Repaired bugs with hidding system and temp files
+	+ Repaired bugs with hiding system and temp files
 
 * 1.4.3
 	+ Added MIT license
@@ -155,10 +162,10 @@ var files = Finder.from('/var/data/base-path').findFiles();		// Load files recur
 	+ Type in readme
 
 * 1.4.0
-	+ Every regexp must be enclosed in <> (before this, dots meens everything, not dot)
+	+ Every regexp must be enclosed in <> (before this, dots means everything, not dot)
 	+ Every character, which does mean something in regexp and is not in <>, is escaped
 
-* 1.3.0 (it seems that I skiped this version, sorry)
+* 1.3.0 (it seems that I skipped this version, sorry)
 
 * 1.2.0
 	+ Added in, from methods
