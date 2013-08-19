@@ -77,8 +77,11 @@
       it('should return path to file in parent directory', function() {
         return Finder["in"]("" + dir + "/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js').should.be.eql(["" + dir + "/eight/._.js"]);
       });
-      return it('should return path to file in parent directory recursively', function() {
+      it('should return path to file in parent directory recursively', function() {
         return Finder.from("" + dir + "/eight/3/4").lookUp(4).findFiles('twelve').should.be.eql(["" + dir + "/seven/twelve"]);
+      });
+      return it('should return first file in parent directories with depth set by string', function() {
+        return Finder.from("" + dir + "/eight/3/4").lookUp(dir).findFiles('twelve').should.be.eql(["" + dir + "/seven/twelve"]);
       });
     });
     describe('filters', function() {

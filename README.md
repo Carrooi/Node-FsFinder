@@ -121,8 +121,12 @@ Keep in mind that one of parent directories is also your disk root directory, so
 ```
 var files = Finder.in(dir).lookUp().findFiles('5.log');
 
-// or set depth
+// set depth with number of parent directories
 var files = Finder.in(dir).lookUp(3).findFiles('5.log');
+
+// set depth with path to top directory
+var files = Finder.in(dir).lookUp('/var/stop/here').findFiles('5.log');
+```
 
 ## Find first
 
@@ -136,6 +140,9 @@ var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 ```
 
 ## Changelog
+
+* 1.7.2
+	+ Added option to set depth in `lookUp` with path
 
 * 1.7.1
 	+ Catch errors when accessing secured paths (via `lookUp` option)

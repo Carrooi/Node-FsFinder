@@ -127,6 +127,11 @@ describe 'Finder', ->
 				"#{dir}/seven/twelve"
 			])
 
+		it 'should return first file in parent directories with depth set by string', ->
+			Finder.from("#{dir}/eight/3/4").lookUp(dir).findFiles('twelve').should.be.eql([
+				"#{dir}/seven/twelve"
+			])
+
 	describe 'filters', ->
 
 		describe '#size()', ->

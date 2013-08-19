@@ -146,11 +146,17 @@ class Finder
 
 	getPathsFromParents: (mask = null, type = 'all') ->
 		directory = @directory
-		depth = if @up == true then directory.match(/\//g).length else @up - 1
 		paths = @getPaths(directory, type, mask)
 
 		if @findFirst is on && typeof paths == 'string'
 			return paths
+
+		if @up == true
+			depth = directory.match(/\//g).length
+		else if typeof @up == 'string'
+			depth = _path.relative(@up, directory).match(/\//g).length + 2
+		else
+			depth = @up - 1
 
 		@exclude(directory)
 
@@ -173,7 +179,7 @@ class Finder
 	find: (mask = null, type = 'all') ->
 		mask = Finder.normalizePattern(mask)
 
-		if @up is on or typeof @up == 'number'
+		if @up is on or typeof @up in ['number', 'string']
 			return @getPathsFromParents(mask, type)
 		else
 			return @getPaths(@directory, type, mask)
