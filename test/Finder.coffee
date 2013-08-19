@@ -5,19 +5,18 @@ fs = require 'fs'
 dir = path.resolve './data'
 
 Finder = require '../lib/Finder'
-finder = new Finder(dir)
 
 describe 'Finder', ->
 
 	describe 'base', ->
 
 		it 'should throw an error if path is not directory', ->
-			( -> new finder("#{dir}/two") ).should.throw()
+			( -> new Finder("#{dir}/two") ).should.throw()
 
 	describe '#findFiles()', ->
 
 		it 'should return file names from root folder', ->
-			finder.findFiles().should.eql([
+			Finder.in(dir).findFiles().should.eql([
 				"#{dir}/0"
 				"#{dir}/1"
 				"#{dir}/five"
@@ -29,7 +28,7 @@ describe 'Finder', ->
 	describe '#findDirectories()', ->
 
 		it 'should return directory names from root folder', ->
-			finder.findDirectories().should.eql([
+			Finder.in(dir).findDirectories().should.eql([
 				"#{dir}/eight"
 				"#{dir}/seven"
 				"#{dir}/six"
@@ -38,7 +37,7 @@ describe 'Finder', ->
 	describe '#find()', ->
 
 		it 'should return file and directory names from root folder', ->
-			finder.find().should.eql([
+			Finder.in(dir).find().should.eql([
 				"#{dir}/0"
 				"#{dir}/1"
 				"#{dir}/eight"
@@ -53,8 +52,7 @@ describe 'Finder', ->
 	describe '#recursive()', ->
 
 		it 'should return file names recursively from find* methods', ->
-			finder.recursively true
-			finder.findFiles().should.eql([
+			Finder.from(dir).findFiles().should.eql([
 				"#{dir}/0"
 				"#{dir}/1"
 				"#{dir}/eight/3/4/file.json"
@@ -69,25 +67,21 @@ describe 'Finder', ->
 				"#{dir}/three"
 				"#{dir}/two"
 			])
-			finder.recursively false
 
 	describe '#exclude()', ->
 
 		it 'should return files which has not got numbers in name', ->
-			finder.exclude ['<[0-9]>']
-			finder.findFiles().should.eql([
+			Finder.in(dir).exclude(['<[0-9]>']).findFiles().should.eql([
 				"#{dir}/five"
 				"#{dir}/one"
 				"#{dir}/three"
 				"#{dir}/two"
 			])
-			finder.excludes = []
 
 	describe '#showSystemFiles()', ->
 
 		it 'should return also system, hide and temp files', ->
-			finder.showSystemFiles true
-			finder.findFiles().should.eql([
+			Finder.in(dir).showSystemFiles().findFiles().should.eql([
 				"#{dir}/.cache"
 				"#{dir}/0"
 				"#{dir}/1"
@@ -97,7 +91,6 @@ describe 'Finder', ->
 				"#{dir}/three"
 				"#{dir}/two"
 			])
-			finder.showSystemFiles false
 
 	describe '#lookUp()', ->
 
@@ -113,14 +106,10 @@ describe 'Finder', ->
 
 	describe 'filters', ->
 
-		afterEach ->
-			finder.filters = []
-
 		describe '#size()', ->
 
 			it 'should return files with size between 2000B and 3000B', ->
-				finder.size('>=', 2000).size('<=', 3000)
-				finder.findFiles().should.eql([
+				Finder.in(dir).size('>=', 2000).size('<=', 3000).findFiles().should.eql([
 					"#{dir}/five"
 				])
 
@@ -128,18 +117,17 @@ describe 'Finder', ->
 
 			it 'should return files which were changed in less than 1 minute ago', ->
 				fs.writeFileSync("#{dir}/two", 'just some changes')
-				finder.date '>', minutes: 1
-				finder.findFiles().should.eql([
+				Finder.in(dir).date('>', minutes: 1).findFiles().should.eql([
 					"#{dir}/two"
 				])
 
 		describe '#filter()', ->
 
 			it 'should return files which names are 3 chars length', ->
-				finder.filter (stat, file) ->
+				filter = (stat, file) ->
 					name = path.basename file, path.extname(file)
 					return name.length == 3
-				finder.findFiles().should.eql([
+				Finder.in(dir).filter(filter).findFiles().should.eql([
 					"#{dir}/one"
 					"#{dir}/two"
 				])

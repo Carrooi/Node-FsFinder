@@ -15,33 +15,32 @@ $ npm install fs-finder
 
 ```
 var Finder = require('fs-finder');
-var finder = new Finder('/var/data/base-path');
 
-var files = finder.findFiles();		// returns array with file's names
+var files = Finder.in('/var/data/base-path').findFiles();		// returns array with file's names
 ```
 
 ## Searching directories
 
 ```
-var directories = finder.findDirectories();		// returns array with directories's names
+var directories = Finder.in(baseDir).findDirectories();		// returns array with directories's names
 ```
 
 ## Searching for files and directories
 
 ```
-var paths = finder.find();		// returns array with file's and directories's names
+var paths = Finder.in(baseDir).find();		// returns array with file's and directories's names
 ```
 
 ## Recursive searching
 
 ```
-var paths = finder.recursively().find();
+var paths = Finder.from(baseDir).find();
 ```
 
 ## Path mask
 
 ```
-var files = finder.recursively().findFiles('*.coffee');
+var files = Finder.from(baseDir).findFiles('*.coffee');
 ```
 
 In this example fs finder looks for all files in base directories recursively with '.coffee' in their name.
@@ -50,7 +49,7 @@ Asterisk is just shortcut for regexp '[0-9a-zA-Z/.-_ ]+' so you can also use reg
 Only thing what you have to do, is enclose your regex into <>.
 
 ```
-var files = finder.recursively().findFiles('temp/<[0-9]+>.tmp');		// files in temp directories with numbers in name and .tmp extension
+var files = Finder.from(baseDir).findFiles('temp/<[0-9]+>.tmp');		// files in temp directories with numbers in name and .tmp extension
 ```
 
 ## Excluding
@@ -58,7 +57,7 @@ var files = finder.recursively().findFiles('temp/<[0-9]+>.tmp');		// files in te
 Same technique like path mask works also for excluding files or directories.
 
 ```
-var files = finder.recursively().exclude(['/.git']).findFiles();
+var files = Finder.from(baseDir).exclude(['/.git']).findFiles();
 ```
 
 This code will return all files from base directory but not files beginning with .git or in .git directory.
@@ -69,7 +68,7 @@ Also there you can use regular expressions or asterisk.
 ### Filtering by file size
 
 ```
-var files = finder.recursively().size('>=', 450).size('<=' 500).findFiles();
+var files = Finder.from(baseDir).size('>=', 450).size('<=' 500).findFiles();
 ```
 
 Returns all files with size between 450B and 500B.
@@ -77,7 +76,7 @@ Returns all files with size between 450B and 500B.
 ### Filtering by modification date
 
 ```
-var files = finder.recursively().date('>', {minutes: 10}).date('<', {minutes: 1}).findFiles();
+var files = Finder.from(baseDir).date('>', {minutes: 10}).date('<', {minutes: 1}).findFiles();
 ```
 
 Returns all files which were modified between two and nine minutes ago.
@@ -95,7 +94,7 @@ var filter = function(stat, path) {
 	}
 });
 
-var files = finder.recursively().filter(filter).findFiles();
+var files = Finder.from(baseDir).filter(filter).findFiles();
 ```
 
 Returns all files if actual time is any hour with 42 minutes.
@@ -108,50 +107,29 @@ In default, fs-finder ignoring temp and system files, which are created for exam
 in the end of file name or dot in the beginning.
 
 ```
-var files = finder.showSystemFiles(true).findFiles()
-var files = finder.showSystemFiles(false).findFiles()
+var files = Finder.in(dir).showSystemFiles().findFiles()
 ```
 
 ## Look in parent directories
 
 Finder can also look for files in parent directories. There is used `exclude` method, so directories in which were your
-files already searched, will not be opened for searching again in their next parent directory.
+files already searched, will not be opened for searching again in their next parent directory if you are using `from` method.
 
 Keep in mind that one of parent directories is also your disk root directory, so you can set depth of count of these parents.
 
-Of course, you can combine it with other methods, even with `recursive`.
-
 ```
-var files = finder.lookUp().findFiles('5.log');
+var files = Finder.in(dir).lookUp().findFiles('5.log');
 
 // or set depth
-var files = finder.lookUp(3).findFiles('5.log');
-```
-
-## Shortcuts
-
-If you want to look for files or directories recursively without any filters, you can use shorter way.
-
-```
-var Finder = require('fs-finder');
-
-var files = Finder.findFiles('/var/data/base-path/*js');				// Returns files
-var directories = Finder.findDirectories('/var/data/base-path');		// Returns directories
-var paths = Finder.find('/var/data/base-path');							// Returns files and directories
-```
-
-```
-var files = Finder.findFiles('/var/data/base-path/<(.git|.idea)*[0-9]>');		// Returns every file with .git or .idea and also with number in path
-```
-
-For more advanced options you can use in and from functions.
-
-```
-var files = Finder.in('/var/data/base-path').findFiles();		// Load files only from base-path directory
-var files = Finder.from('/var/data/base-path').findFiles();		// Load files recursively
-```
+var files = Finder.in(dir).lookUp(3).findFiles('5.log');
 
 ## Changelog
+
+* 1.7.0
+	+ Mistake in test
+	+ Bug in Finder (filters were shared across all instances)
+	+ Preferred way is to use 'static' methods
+	+ Tests uses 'static' methods
 
 * 1.6.0
 	+ New reporter for tests

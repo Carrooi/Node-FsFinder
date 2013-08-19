@@ -17,9 +17,9 @@ class Finder
 
 	recursive: false
 
-	excludes: []
+	excludes: null
 
-	filters: []
+	filters: null
 
 	systemFiles: false
 
@@ -32,6 +32,8 @@ class Finder
 			throw new Error "Path #{directory} is not directory"
 
 		@directory = directory
+		@excludes = []
+		@filters = []
 
 
 	recursively: (@recursive = true) ->
