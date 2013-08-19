@@ -115,7 +115,8 @@ var files = Finder.in(dir).showSystemFiles().findFiles()
 Finder can also look for files in parent directories. There is used `exclude` method, so directories in which were your
 files already searched, will not be opened for searching again in their next parent directory if you are using `from` method.
 
-Keep in mind that one of parent directories is also your disk root directory, so you can set depth of count of these parents.
+Keep in mind that one of parent directories is also your disk root directory, so you can get list of all of your files or
+ directories on disk which are accessible from your user account. To avoid this, you can set depth.
 
 ```
 var files = Finder.in(dir).lookUp().findFiles('5.log');
@@ -135,6 +136,9 @@ var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 ```
 
 ## Changelog
+
+* 1.7.1
+	+ Catch errors when accessing secured paths (via `lookUp` option)
 
 * 1.7.0
 	+ Mistake in test

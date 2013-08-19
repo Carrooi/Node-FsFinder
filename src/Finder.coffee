@@ -94,7 +94,12 @@ class Finder
 	getPaths: (dir, type = 'all', mask = null) ->
 		paths = []
 
-		for path in fs.readdirSync(dir)
+		try
+			read = fs.readdirSync(dir)
+		catch err
+			return if @findFirst is on then null else paths
+
+		for path in read
 			path = dir + '/' + path
 
 			ok = true
@@ -109,7 +114,10 @@ class Finder
 				if _path.basename(path)[0] == '.' then continue
 				if path.match(/~$/) != null then continue
 
-			stat = fs.statSync(path)
+			try
+				stat = fs.statSync(path)
+			catch err
+				continue
 
 			if type == 'all' || (type == 'files' && stat.isFile()) || (type == 'directories' && stat.isDirectory())
 				if mask == null || (mask != null && (new RegExp(mask, 'g')).test(path))
