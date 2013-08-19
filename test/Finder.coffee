@@ -49,6 +49,29 @@ describe 'Finder', ->
 				"#{dir}/two"
 			])
 
+	describe '#findFirst()', ->
+
+		it 'should return file path', ->
+			Finder.in(dir).findFirst().findFiles().should.be.equal("#{dir}/0")
+
+		it 'should return null', ->
+			should.not.exists(Finder.in(dir).findFirst().findFiles('randomName'))
+
+		it 'should return file path for first name with two numbers in name', ->
+			Finder.from(dir).findFirst().findFiles('<[0-9]{2}>').should.be.equal("#{dir}/seven/13")
+
+		it 'should return null for recursive searching', ->
+			should.not.exists(Finder.from(dir).findFirst().findFiles('randomName'))
+
+		it 'should return first path to directory', ->
+			Finder.from(dir).findFirst().findDirectories('4').should.be.equal("#{dir}/eight/3/4")
+
+		it 'should return null when looking into parents', ->
+			should.not.exists(Finder.in("#{dir}/eight/3/4").lookUp(4).findFirst().findFiles('twelve'))
+
+		it 'should return first file when looking into parents recursively', ->
+			Finder.from("#{dir}/eight/3/4").lookUp(4).findFirst().findFiles('twelve').should.equal("#{dir}/seven/twelve")
+
 	describe '#recursive()', ->
 
 		it 'should return file names recursively from find* methods', ->

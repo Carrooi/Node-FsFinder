@@ -123,6 +123,17 @@ var files = Finder.in(dir).lookUp().findFiles('5.log');
 // or set depth
 var files = Finder.in(dir).lookUp(3).findFiles('5.log');
 
+## Find first
+
+When you want to find first occur of some file or directory, you can use option `findFirst`. fs-finder will not look into
+all directories (for recursive searching) but stop when it will find first matching path.
+
+If there is no matching path, null will be returned.
+
+```
+var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
+```
+
 ## Changelog
 
 * 1.7.0
@@ -130,6 +141,7 @@ var files = Finder.in(dir).lookUp(3).findFiles('5.log');
 	+ Bug in Finder (filters were shared across all instances)
 	+ Preferred way is to use 'static' methods
 	+ Tests uses 'static' methods
+	+ Added `findFirst` option
 
 * 1.6.0
 	+ New reporter for tests

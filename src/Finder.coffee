@@ -25,6 +25,8 @@ class Finder
 
 	up: false
 
+	findFirst: false
+
 
 	constructor: (directory) ->
 		directory = _path.resolve(directory)
@@ -80,6 +82,10 @@ class Finder
 		return @
 
 
+	findFirst: (@findFirst = true) ->
+		return @
+
+
 	filter: (fn) ->
 		@filters.push(fn)
 		return @
@@ -115,26 +121,45 @@ class Finder
 
 					if ok == false then continue
 
+					return path if @findFirst is on
 					paths.push(path)
 
 			if stat.isDirectory() && @recursive == true
-				paths = paths.concat(@getPaths(path, type, mask))
+				result = @getPaths(path, type, mask)
+				if @findFirst is on && typeof result == 'string'
+					return result
+				else if @findFirst is on && result == null
+					continue
+				else
+					paths = paths.concat(result)
 
-		return paths
+		return if @findFirst is on then null else paths
 
 
 	getPathsFromParents: (mask = null, type = 'all') ->
 		directory = @directory
 		depth = if @up == true then directory.match(/\//g).length else @up - 1
 		paths = @getPaths(directory, type, mask)
+
+		if @findFirst is on && typeof paths == 'string'
+			return paths
+
 		@exclude(directory)
 
 		for i in [0..depth - 1]
 			directory = _path.dirname(directory)
-			paths = paths.concat(@getPaths(directory, type, mask))
+			result = @getPaths(directory, type, mask)
+
+			if @findFirst is on && typeof result == 'string'
+				return result
+			else if @findFirst is on && result == null
+				# continue
+			else
+				paths = paths.concat(result)
+
 			@exclude(directory)
 
-		return paths
+		return if @findFirst is on then null else paths
 
 
 	find: (mask = null, type = 'all') ->

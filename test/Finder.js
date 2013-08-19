@@ -35,6 +35,29 @@
         return Finder["in"](dir).find().should.eql(["" + dir + "/0", "" + dir + "/1", "" + dir + "/eight", "" + dir + "/five", "" + dir + "/one", "" + dir + "/seven", "" + dir + "/six", "" + dir + "/three", "" + dir + "/two"]);
       });
     });
+    describe('#findFirst()', function() {
+      it('should return file path', function() {
+        return Finder["in"](dir).findFirst().findFiles().should.be.equal("" + dir + "/0");
+      });
+      it('should return null', function() {
+        return should.not.exists(Finder["in"](dir).findFirst().findFiles('randomName'));
+      });
+      it('should return file path for first name with two numbers in name', function() {
+        return Finder.from(dir).findFirst().findFiles('<[0-9]{2}>').should.be.equal("" + dir + "/seven/13");
+      });
+      it('should return null for recursive searching', function() {
+        return should.not.exists(Finder.from(dir).findFirst().findFiles('randomName'));
+      });
+      it('should return first path to directory', function() {
+        return Finder.from(dir).findFirst().findDirectories('4').should.be.equal("" + dir + "/eight/3/4");
+      });
+      it('should return null when looking into parents', function() {
+        return should.not.exists(Finder["in"]("" + dir + "/eight/3/4").lookUp(4).findFirst().findFiles('twelve'));
+      });
+      return it('should return first file when looking into parents recursively', function() {
+        return Finder.from("" + dir + "/eight/3/4").lookUp(4).findFirst().findFiles('twelve').should.equal("" + dir + "/seven/twelve");
+      });
+    });
     describe('#recursive()', function() {
       return it('should return file names recursively from find* methods', function() {
         return Finder.from(dir).findFiles().should.eql(["" + dir + "/0", "" + dir + "/1", "" + dir + "/eight/3/4/file.json", "" + dir + "/five", "" + dir + "/one", "" + dir + "/seven/13", "" + dir + "/seven/14", "" + dir + "/seven/twelve", "" + dir + "/six/eleven", "" + dir + "/six/nine", "" + dir + "/six/ten", "" + dir + "/three", "" + dir + "/two"]);
