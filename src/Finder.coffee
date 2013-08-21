@@ -151,15 +151,18 @@ class Finder
 		if @findFirst is on && typeof paths == 'string'
 			return paths
 
+		@exclude(directory)
+
 		if @up == true
 			depth = directory.match(/\//g).length
 		else if typeof @up == 'string'
+			if @up == directory
+				return if @findFirst is on then null else paths
+
 			match = _path.relative(@up, directory).match(/\//g)
 			depth = if match == null then 2 else match.length + 2
 		else
 			depth = @up - 1
-
-		@exclude(directory)
 
 		for i in [0..depth - 1]
 			directory = _path.dirname(directory)

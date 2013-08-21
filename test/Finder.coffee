@@ -129,6 +129,9 @@ describe 'Finder', ->
 				"#{dir}/eight/package.json"
 			])
 
+		it 'should return null when limit parent is the same like searched directory and file is not there', ->
+			Finder.in(dir).lookUp(dir).findFiles('package.json').should.be.eql([])
+
 		it 'should return path to file in parent directory recursively', ->
 			Finder.from("#{dir}/eight/3/4").lookUp(4).findFiles('twelve').should.be.eql([
 				"#{dir}/seven/twelve"
