@@ -79,6 +79,8 @@ describe 'Finder', ->
 				"#{dir}/0"
 				"#{dir}/1"
 				"#{dir}/eight/3/4/file.json"
+				"#{dir}/eight/other.js"
+				"#{dir}/eight/package.json"
 				"#{dir}/five"
 				"#{dir}/one"
 				"#{dir}/seven/13"
@@ -120,6 +122,11 @@ describe 'Finder', ->
 		it 'should return path to file in parent directory', ->
 			Finder.in("#{dir}/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js').should.be.eql([
 				"#{dir}/eight/._.js"
+			])
+
+		it 'should return first file in parent directorz with depth set by string', ->
+			Finder.in("#{dir}/eight").lookUp(dir).findFiles('package.json').should.be.eql([
+				"#{dir}/eight/package.json"
 			])
 
 		it 'should return path to file in parent directory recursively', ->

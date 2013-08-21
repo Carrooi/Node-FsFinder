@@ -154,7 +154,8 @@ class Finder
 		if @up == true
 			depth = directory.match(/\//g).length
 		else if typeof @up == 'string'
-			depth = _path.relative(@up, directory).match(/\//g).length + 2
+			match = _path.relative(@up, directory).match(/\//g)
+			depth = if match == null then 2 else match.length + 2
 		else
 			depth = @up - 1
 
