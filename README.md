@@ -141,6 +141,10 @@ var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 
 ## Changelog
 
+* 1.8.0
+	+ Refactoring tests
+	+ Optimized dependencies
+
 * 1.7.4
 	+ Bug in `lookUp` method
 

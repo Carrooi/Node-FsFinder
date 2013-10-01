@@ -1,7 +1,7 @@
 {
 	"name": "fs-finder",
 	"description": "File system recursive finder",
-	"version": "1.7.4",
+	"version": "1.8.0",
 	"author": {
 		"name": "David Kudera",
 		"email": "sakren@gmail.com"
@@ -23,11 +23,11 @@
 	},
 	"main": "./lib/Finder.js",
 	"dependencies": {
-		"moment": "2.1.0",
-		"operator-compare": "latest"
+		"moment": "~2.2.1",
+		"operator-compare": "~1.0.1"
 	},
 	"devDependencies": {
-		"should": "1.2.2"
+		"chai": "~1.8.0"
 	},
 	"scripts": {
 		"test": "cd ./test; mocha ./index.js --reporter spec;"
