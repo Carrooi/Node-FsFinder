@@ -1,9 +1,6 @@
 # fs-finder
-file system finder inspired by finder in [Nette framework](http://doc.nette.org/en/finder).
 
-## Changelog
-
-Changelog is in the bottom of this readme.
+File system finder inspired by finder in [Nette framework](http://doc.nette.org/en/finder).
 
 ## Installing
 
@@ -139,11 +136,18 @@ If there is no matching path, null will be returned.
 var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 ```
 
+## Tests
+
+```
+$ npm test
+```
+
 ## Changelog
 
 * 1.8.0
 	+ Refactoring tests
 	+ Optimized dependencies
+	+ Better documentation
 
 * 1.7.4
 	+ Bug in `lookUp` method
