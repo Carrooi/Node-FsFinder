@@ -23,11 +23,11 @@
 	},
 	"main": "./lib/Finder.js",
 	"dependencies": {
-		"moment": "~2.2.1",
+		"moment": "~2.5.0",
 		"operator-compare": "~1.0.1"
 	},
 	"devDependencies": {
-		"chai": "~1.8.0"
+		"chai": "~1.8.1"
 	},
 	"scripts": {
 		"test": "cd ./test; mocha ./index.js --reporter spec;"
