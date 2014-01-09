@@ -222,13 +222,3 @@ describe 'Finder', ->
 					directory: ''
 					mask: '*<e$>'
 				)
-
-		describe '#escapeForRegex()', ->
-
-			it 'should return escaped string for using it in regexp', ->
-				expect(Finder.escapeForRegex('.h[]e()l+|l?^o$')).to.be.equal '\\.h\\[\\]e\\(\\)l\\+\\|l\\?\\^o\\$'
-
-		describe '#normalizePattern()', ->
-
-			it 'should return proper regular expression from path parameter', ->
-				expect(Finder.normalizePattern("/.temp/<(one|two)>*<$>")).to.be.equal "/\\.temp/(one|two)[0-9a-zA-Z/.-_ ]+$"
