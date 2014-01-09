@@ -2,13 +2,12 @@ fs = require 'fs'
 _path = require 'path'
 moment = require 'moment'
 compare = require 'operator-compare'
+escape = require 'escape-regexp'
 
 class Finder
 
 
 	@ASTERISK_PATTERN = '<[0-9a-zA-Z/.-_ ]+>'
-
-	@ESCAPE_PATTERN = ['.', '[', ']', '\\', '^', '$', '|', '?', '+', '(', ')', '{', '}']
 
 	@TIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
@@ -261,24 +260,17 @@ class Finder
 		if parts != null
 			partsResult = {}
 			for part, i in parts
-				partsResult['::' + i + '::'] = part.replace(/^<(.*)>$/, '$1')
-				pattern = pattern.replace(part, '::' + i + '::')
+				partsResult['__<<' + i + '>>__'] = part.replace(/^<(.*)>$/, '$1')
+				pattern = pattern.replace(part, '__<<' + i + '>>__')
 
-			pattern = Finder.escapeForRegex(pattern)
+			pattern = escape(pattern)
 
 			for replacement, part of partsResult
 				pattern = pattern.replace(replacement, part)
 		else
-			pattern = Finder.escapeForRegex(pattern)
+			pattern = escape(pattern)
 
 		return pattern
-
-
-	@escapeForRegex: (text) ->
-		replace = []
-		replace.push('\\' + char) for char in Finder.ESCAPE_PATTERN
-
-		return text.replace(new RegExp('(' + replace.join('|') + ')', 'g'), '\\$1')
 
 
 module.exports = Finder

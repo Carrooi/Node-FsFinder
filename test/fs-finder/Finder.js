@@ -154,7 +154,7 @@
       });
     });
     return describe('utils', function() {
-      describe('#parseDirectory()', function() {
+      return describe('#parseDirectory()', function() {
         return it('should return object with directory and mask from path to find* methods', function() {
           expect(Finder.parseDirectory("/one")).to.be.eql({
             directory: "/one",
@@ -168,16 +168,6 @@
             directory: '',
             mask: '*<e$>'
           });
-        });
-      });
-      describe('#escapeForRegex()', function() {
-        return it('should return escaped string for using it in regexp', function() {
-          return expect(Finder.escapeForRegex('.h[]e()l+|l?^o$')).to.be.equal('\\.h\\[\\]e\\(\\)l\\+\\|l\\?\\^o\\$');
-        });
-      });
-      return describe('#normalizePattern()', function() {
-        return it('should return proper regular expression from path parameter', function() {
-          return expect(Finder.normalizePattern("/.temp/<(one|two)>*<$>")).to.be.equal("/\\.temp/(one|two)[0-9a-zA-Z/.-_ ]+$");
         });
       });
     });
