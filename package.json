@@ -27,7 +27,8 @@
 		"operator-compare": "~1.0.1"
 	},
 	"devDependencies": {
-		"chai": "~1.8.1"
+		"chai": "~1.8.1",
+		"fs-mock": "~1.0.1"
 	},
 	"scripts": {
 		"test": "cd ./test; mocha ./index.js --reporter spec;"

@@ -142,6 +142,31 @@ var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 $ npm test
 ```
 
+If you want to use fs-finder in your own tests, you can use it with [fs-mock](https://github.com/sakren/node-fs-mock)
+module, which is already build it.
+
+For more information how to use it, please read documentation for [fs-mock](https://github.com/sakren/node-fs-mock/blob/master/README.md).
+
+```
+var fs = null;
+
+beforeEach(function() {
+	fs = Finder.mock({
+		'var': {
+			'www': {
+				'index.php': '<?php echo "hello; ?>'
+			}
+		}
+	});
+});
+
+afterEach(function() {
+	Finder.restore();
+});
+```
+
+In fs variable is mocked fs module, so if you need to use fs module in your tests, just use this one.
+
 ## Changelog
 
 * 1.8.0
