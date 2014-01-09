@@ -38,6 +38,16 @@ class Finder
 		@filters = []
 
 
+	@mock: (tree = {}, info = {}) ->
+		FS = require 'fs-mock'
+		fs = new FS(tree, info)
+		return fs
+
+
+	@restore: ->
+		fs = require 'fs'
+
+
 	recursively: (@recursive = true) ->
 		return @
 
@@ -97,10 +107,11 @@ class Finder
 		try
 			read = fs.readdirSync(dir)
 		catch err
+			throw err
 			return if @findFirst is on then null else paths
 
 		for path in read
-			path = dir + '/' + path
+			path = _path.join(dir, path)
 
 			ok = true
 			for exclude in @excludes
