@@ -20,8 +20,6 @@ class Base
 
 	findFirst: false
 
-	sync: false
-
 
 	constructor: (directory) ->
 		directory = path.resolve(directory)
@@ -51,14 +49,6 @@ class Base
 	#*******************************************************************************************************************
 	#										SETUP
 	#*******************************************************************************************************************
-
-
-	sync: ->
-		@sync = true
-
-
-	async: ->
-		@sync = false
 
 
 	recursively: (@recursive = true) ->
