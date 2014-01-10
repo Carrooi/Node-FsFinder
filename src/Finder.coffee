@@ -4,6 +4,8 @@ Helpers = require './Helpers'
 moment = require 'moment'
 compare = require 'operator-compare'
 
+isFunction = (obj) -> return Object.prototype.toString.call(obj) == '[object Function]'
+
 class Finder extends Base
 
 
@@ -23,17 +25,17 @@ class Finder extends Base
 		return (new Finder(path)).recursively()
 
 
-	@find: (path, type = 'all') ->
-		path = @parseDirectory(path)
-		return (new Finder(path.directory)).recursively().find(path.mask, type)
+	@find: (path, fn = null, type = 'all') ->
+		path = Helpers.parseDirectory(path)
+		return (new Finder(path.directory)).recursively().find(path.mask, fn, type)
 
 
-	@findFiles: (path) ->
-		return Finder.find(path, 'files')
+	@findFiles: (path, fn = null) ->
+		return Finder.find(path, fn, 'files')
 
 
-	@findDirectories: (path) ->
-		return Finder.find(path, 'directories')
+	@findDirectories: (path, fn = null) ->
+		return Finder.find(path, fn, 'directories')
 
 
 	#*******************************************************************************************************************
@@ -41,21 +43,39 @@ class Finder extends Base
 	#*******************************************************************************************************************
 
 
-	find: (mask = null, type = 'all') ->
+	find: (mask = null, fn = null, type = 'all') ->
+		if isFunction(mask)
+			fn = mask
+			mask = null
+
 		mask = Helpers.normalizePattern(mask)
 
 		if @up is on or typeof @up in ['number', 'string']
-			return @getPathsFromParentsSync(mask, type)
+			if fn == null
+				return @getPathsFromParentsSync(mask, type)
+			else
+				return @getPathsFromParentsAsync(mask, type, fn)
 		else
-			return @getPathsSync(type, mask)
+			if fn == null
+				return @getPathsSync(type, mask)
+			else
+				return @getPathsAsync(type, mask, fn)
 
 
-	findFiles: (mask = null) ->
-		return @find(mask, 'files')
+	findFiles: (mask = null, fn = null) ->
+		if isFunction(mask)
+			fn = mask
+			mask = null
+
+		return @find(mask, fn, 'files')
 
 
-	findDirectories: (mask = null) ->
-		return @find(mask, 'directories')
+	findDirectories: (mask = null, fn = null) ->
+		if isFunction(mask)
+			fn = mask
+			mask = null
+
+		return @find(mask, fn, 'directories')
 
 
 	#*******************************************************************************************************************
