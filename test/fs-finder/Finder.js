@@ -48,7 +48,7 @@
     afterEach(function() {
       return Finder.restore();
     });
-    describe('base', function() {
+    describe('#constructor()', function() {
       return it('should throw an error if path is not directory', function() {
         return expect(function() {
           return new Finder("/two");
@@ -125,50 +125,30 @@
         return expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.be.eql(["/seven/twelve"]);
       });
     });
-    describe('filters', function() {
-      describe('#size()', function() {
-        return it('should return files with size between 2000B and 3000B', function() {
-          return expect(Finder["in"]('/').size('>=', 9).size('<=', 11).findFiles()).to.be.eql(["/five"]);
-        });
-      });
-      describe('#date()', function() {
-        return it('should return files which were changed in less than 1 second ago', function() {
-          fs.writeFileSync("/two", 'just some changes');
-          return setTimeout(function() {
-            return expect(Finder["in"]('/').date('>', {
-              seconds: 1
-            }).findFiles()).to.be.eql(["/two"]);
-          }, 1100);
-        });
-      });
-      return describe('#filter()', function() {
-        return it('should return files which names are 3 chars length', function() {
-          var filter;
-          filter = function(stat, file) {
-            var name;
-            name = path.basename(file, path.extname(file));
-            return name.length === 3;
-          };
-          return expect(Finder["in"]('/').filter(filter).findFiles()).to.be.eql(["/one", "/two"]);
-        });
+    describe('#size()', function() {
+      return it('should return files with size between 2000B and 3000B', function() {
+        return expect(Finder["in"]('/').size('>=', 9).size('<=', 11).findFiles()).to.be.eql(["/five"]);
       });
     });
-    return describe('utils', function() {
-      return describe('#parseDirectory()', function() {
-        return it('should return object with directory and mask from path to find* methods', function() {
-          expect(Finder.parseDirectory("/one")).to.be.eql({
-            directory: "/one",
-            mask: null
-          });
-          expect(Finder.parseDirectory("<(five|three)*>")).to.be.eql({
-            directory: '',
-            mask: '<(five|three)*>'
-          });
-          return expect(Finder.parseDirectory("*<e$>")).to.be.eql({
-            directory: '',
-            mask: '*<e$>'
-          });
-        });
+    describe('#date()', function() {
+      return it('should return files which were changed in less than 1 second ago', function() {
+        fs.writeFileSync("/two", 'just some changes');
+        return setTimeout(function() {
+          return expect(Finder["in"]('/').date('>', {
+            seconds: 1
+          }).findFiles()).to.be.eql(["/two"]);
+        }, 1100);
+      });
+    });
+    return describe('#filter()', function() {
+      return it('should return files which names are 3 chars length', function() {
+        var filter;
+        filter = function(stat, file) {
+          var name;
+          name = path.basename(file, path.extname(file));
+          return name.length === 3;
+        };
+        return expect(Finder["in"]('/').filter(filter).findFiles()).to.be.eql(["/one", "/two"]);
       });
     });
   });

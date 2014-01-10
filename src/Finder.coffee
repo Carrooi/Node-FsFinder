@@ -1,210 +1,18 @@
-fs = require 'fs'
-_path = require 'path'
+Base = require './Base'
+Helpers = require './Helpers'
+
 moment = require 'moment'
 compare = require 'operator-compare'
-escape = require 'escape-regexp'
 
-class Finder
+class Finder extends Base
 
-
-	@ASTERISK_PATTERN = '<[0-9a-zA-Z/.-_ ]+>'
 
 	@TIME_FORMAT = 'YYYY-MM-DD HH:mm'
 
 
-	directory: null
-
-	recursive: false
-
-	excludes: null
-
-	filters: null
-
-	systemFiles: false
-
-	up: false
-
-	findFirst: false
-
-
-	constructor: (directory) ->
-		directory = _path.resolve(directory)
-		if !fs.statSync(directory).isDirectory()
-			throw new Error "Path #{directory} is not directory"
-
-		@directory = directory
-		@excludes = []
-		@filters = []
-
-
-	@mock: (tree = {}, info = {}) ->
-		FS = require 'fs-mock'
-		fs = new FS(tree, info)
-		return fs
-
-
-	@restore: ->
-		fs = require 'fs'
-
-
-	recursively: (@recursive = true) ->
-		return @
-
-
-	exclude: (excludes) ->
-		if typeof excludes == 'string' then excludes = [excludes]
-
-		result = []
-		for exclude in excludes
-			result.push(Finder.normalizePattern(exclude))
-
-		@excludes = @excludes.concat(result)
-		return @
-
-
-	size: (operation, value) ->
-		@filter( (stat) ->
-			return compare(stat.size, operation, value)
-		)
-
-		return @
-
-
-	date: (operation, value) ->
-		@filter( (stat) ->
-			switch Object.prototype.toString.call(value)
-				when '[object String]' then date = moment(value, Finder.TIME_FORMAT)
-				when '[object Object]' then date = moment().subtract(value)
-				else throw new Error 'Date format is not valid.'
-
-			return compare((new Date(stat.mtime)).getTime(), operation, date.valueOf())
-		)
-
-		return @
-
-
-	showSystemFiles: (@systemFiles = true) ->
-		return @
-
-
-	lookUp: (@up = true) ->
-		return @
-
-
-	findFirst: (@findFirst = true) ->
-		return @
-
-
-	filter: (fn) ->
-		@filters.push(fn)
-		return @
-
-
-	getPaths: (dir, type = 'all', mask = null) ->
-		paths = []
-
-		try
-			read = fs.readdirSync(dir)
-		catch err
-			throw err
-			return if @findFirst is on then null else paths
-
-		for path in read
-			path = _path.join(dir, path)
-
-			ok = true
-			for exclude in @excludes
-				if (new RegExp(exclude)).test(path)
-					ok = false
-					break
-
-			if ok == false then continue
-
-			if @systemFiles == false
-				if _path.basename(path)[0] == '.' then continue
-				if path.match(/~$/) != null then continue
-
-			try
-				stat = fs.statSync(path)
-			catch err
-				continue
-
-			if type == 'all' || (type == 'files' && stat.isFile()) || (type == 'directories' && stat.isDirectory())
-				if mask == null || (mask != null && (new RegExp(mask, 'g')).test(path))
-					ok = true
-					for filter in @filters
-						if !filter(stat, path)
-							ok = false
-							break
-
-					if ok == false then continue
-
-					return path if @findFirst is on
-					paths.push(path)
-
-			if stat.isDirectory() && @recursive == true
-				result = @getPaths(path, type, mask)
-				if @findFirst is on && typeof result == 'string'
-					return result
-				else if @findFirst is on && result == null
-					continue
-				else
-					paths = paths.concat(result)
-
-		return if @findFirst is on then null else paths
-
-
-	getPathsFromParents: (mask = null, type = 'all') ->
-		directory = @directory
-		paths = @getPaths(directory, type, mask)
-
-		if @findFirst is on && typeof paths == 'string'
-			return paths
-
-		@exclude(directory)
-
-		if @up == true
-			depth = directory.match(/\//g).length
-		else if typeof @up == 'string'
-			if @up == directory
-				return if @findFirst is on then null else paths
-
-			match = _path.relative(@up, directory).match(/\//g)
-			depth = if match == null then 2 else match.length + 2
-		else
-			depth = @up - 1
-
-		for i in [0..depth - 1]
-			directory = _path.dirname(directory)
-			result = @getPaths(directory, type, mask)
-
-			if @findFirst is on && typeof result == 'string'
-				return result
-			else if @findFirst is on && result == null
-				# continue
-			else
-				paths = paths.concat(result)
-
-			@exclude(directory)
-
-		return if @findFirst is on then null else paths
-
-
-	find: (mask = null, type = 'all') ->
-		mask = Finder.normalizePattern(mask)
-
-		if @up is on or typeof @up in ['number', 'string']
-			return @getPathsFromParents(mask, type)
-		else
-			return @getPaths(@directory, type, mask)
-
-
-	findFiles: (mask = null) ->
-		return @find(mask, 'files')
-
-
-	findDirectories: (mask = null) ->
-		return @find(mask, 'directories')
+	#*******************************************************************************************************************
+	#										CREATING INSTANCE
+	#*******************************************************************************************************************
 
 
 	@in: (path) ->
@@ -228,49 +36,52 @@ class Finder
 		return Finder.find(path, 'directories')
 
 
-	@parseDirectory: (path) ->
-		mask = null
-		asterisk = path.indexOf('*')
-		regexp = path.indexOf('<')
-
-		if asterisk != -1 || regexp != -1
-			if asterisk == -1 || (asterisk != -1 && regexp != -1 && asterisk > regexp)
-				splitter = regexp
-			else if regexp == -1 || (regexp != -1 && asterisk != -1 && asterisk <= regexp)
-				splitter = asterisk
-
-			mask = path.substr(splitter)
-			path = path.substr(0, splitter)
-
-		return {
-			directory: path
-			mask: mask
-		}
+	#*******************************************************************************************************************
+	#										FIND METHODS
+	#*******************************************************************************************************************
 
 
-	@normalizePattern: (pattern) ->
-		if pattern == null
-			return null
+	find: (mask = null, type = 'all') ->
+		mask = Helpers.normalizePattern(mask)
 
-		if pattern == '*'
-			return null
-
-		pattern = pattern.replace(/\*/g, Finder.ASTERISK_PATTERN)
-		parts = pattern.match(/<((?!(<|>)).)*>/g)
-		if parts != null
-			partsResult = {}
-			for part, i in parts
-				partsResult['__<<' + i + '>>__'] = part.replace(/^<(.*)>$/, '$1')
-				pattern = pattern.replace(part, '__<<' + i + '>>__')
-
-			pattern = escape(pattern)
-
-			for replacement, part of partsResult
-				pattern = pattern.replace(replacement, part)
+		if @up is on or typeof @up in ['number', 'string']
+			return @getPathsFromParentsSync(mask, type)
 		else
-			pattern = escape(pattern)
+			return @getPathsSync(type, mask)
 
-		return pattern
+
+	findFiles: (mask = null) ->
+		return @find(mask, 'files')
+
+
+	findDirectories: (mask = null) ->
+		return @find(mask, 'directories')
+
+
+	#*******************************************************************************************************************
+	#										FILTERS
+	#*******************************************************************************************************************
+
+
+	size: (operation, value) ->
+		@filter( (stat) ->
+			return compare(stat.size, operation, value)
+		)
+
+		return @
+
+
+	date: (operation, value) ->
+		@filter( (stat) ->
+			switch Object.prototype.toString.call(value)
+				when '[object String]' then date = moment(value, Finder.TIME_FORMAT)
+				when '[object Object]' then date = moment().subtract(value)
+				else throw new Error 'Date format is not valid.'
+
+			return compare((new Date(stat.mtime)).getTime(), operation, date.valueOf())
+		)
+
+		return @
 
 
 module.exports = Finder

@@ -39,7 +39,7 @@ describe 'Finder', ->
 		Finder.restore()
 	)
 
-	describe 'base', ->
+	describe '#constructor()', ->
 
 		it 'should throw an error if path is not directory', ->
 			expect( -> new Finder("/two") ).to.throw(Error, "Path /two is not directory")
@@ -173,52 +173,30 @@ describe 'Finder', ->
 				"/seven/twelve"
 			])
 
-	describe 'filters', ->
+	describe '#size()', ->
 
-		describe '#size()', ->
+		it 'should return files with size between 2000B and 3000B', ->
+			expect(Finder.in('/').size('>=', 9).size('<=', 11).findFiles()).to.be.eql([
+				"/five"
+			])
 
-			it 'should return files with size between 2000B and 3000B', ->
-				expect(Finder.in('/').size('>=', 9).size('<=', 11).findFiles()).to.be.eql([
-					"/five"
-				])
+	describe '#date()', ->
 
-		describe '#date()', ->
-
-			it 'should return files which were changed in less than 1 second ago', ->
-				fs.writeFileSync("/two", 'just some changes')
-				setTimeout( ->
-					expect(Finder.in('/').date('>', seconds: 1).findFiles()).to.be.eql([
-						"/two"
-					])
-				, 1100)
-
-		describe '#filter()', ->
-
-			it 'should return files which names are 3 chars length', ->
-				filter = (stat, file) ->
-					name = path.basename file, path.extname(file)
-					return name.length == 3
-				expect(Finder.in('/').filter(filter).findFiles()).to.be.eql([
-					"/one"
+		it 'should return files which were changed in less than 1 second ago', ->
+			fs.writeFileSync("/two", 'just some changes')
+			setTimeout( ->
+				expect(Finder.in('/').date('>', seconds: 1).findFiles()).to.be.eql([
 					"/two"
 				])
+			, 1100)
 
-	describe 'utils', ->
+	describe '#filter()', ->
 
-		describe '#parseDirectory()', ->
-
-			it 'should return object with directory and mask from path to find* methods', ->
-				expect(Finder.parseDirectory("/one")).to.be.eql(
-					directory: "/one"
-					mask: null
-				)
-
-				expect(Finder.parseDirectory("<(five|three)*>")).to.be.eql(
-					directory: ''
-					mask: '<(five|three)*>'
-				)
-
-				expect(Finder.parseDirectory("*<e$>")).to.be.eql(
-					directory: ''
-					mask: '*<e$>'
-				)
+		it 'should return files which names are 3 chars length', ->
+			filter = (stat, file) ->
+				name = path.basename file, path.extname(file)
+				return name.length == 3
+			expect(Finder.in('/').filter(filter).findFiles()).to.be.eql([
+				"/one"
+				"/two"
+			])
