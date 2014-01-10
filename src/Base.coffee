@@ -23,6 +23,8 @@ class Base
 
 	_async: true
 
+	_data: null
+
 
 	constructor: (directory) ->
 		directory = path.resolve(directory)
@@ -146,6 +148,26 @@ class Base
 			return null
 		else
 			return paths
+
+
+	getPathsAsync: (type = 'all', mask = null, dir = @directory) ->
+		deferred = Q.defer()
+		result = []
+
+		Q.nfcall(fs.readdir, dir).then( (paths) =>
+			for _path in paths
+				_path = path.join(dir, _path)
+
+				if !@checkExcludes(_path) || !@checkSystemFiles(_path)
+					continue
+
+
+
+		).fail( =>
+			deferred.resolve(if @findFiles == true then null else [])
+		)
+
+		return deferred.promise
 
 
 	#*******************************************************************************************************************
