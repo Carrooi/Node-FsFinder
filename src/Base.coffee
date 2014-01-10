@@ -94,42 +94,33 @@ class Base
 		try
 			read = fs.readdirSync(dir)
 		catch err
-			return if @findFirst is on then null else paths
+			if @findFirst
+				return null
+
+			return paths
 
 		for _path in read
 			_path = path.join(dir, _path)
 
-			ok = true
-			for exclude in @excludes
-				if (new RegExp(exclude)).test(_path)
-					ok = false
-					break
-
-			if ok == false then continue
-
-			if @systemFiles == false
-				if path.basename(_path)[0] == '.' then continue
-				if _path.match(/~$/) != null then continue
+			if !@checkExcludes(_path) || !@checkSystemFiles(_path)
+				continue
 
 			try
-				stat = fs.statSync(_path)
+				stats = fs.statSync(_path)
 			catch err
 				continue
 
-			if type == 'all' || (type == 'files' && stat.isFile()) || (type == 'directories' && stat.isDirectory())
-				if mask == null || (mask != null && (new RegExp(mask, 'g')).test(_path))
-					ok = true
-					for filter in @filters
-						if !filter(stat, _path)
-							ok = false
-							break
+			switch @checkFile(_path, stats, mask, type)
+				when 0
+					continue
 
-					if ok == false then continue
+				when 1
+					if @findFirst == true
+						return _path
 
-					return _path if @findFirst is on
 					paths.push(_path)
 
-			if stat.isDirectory() && @recursive == true
+			if stats.isDirectory() && @recursive == true
 				result = @getPathsSync(type, mask, _path)
 				if @findFirst is on && typeof result == 'string'
 					return result
@@ -138,7 +129,50 @@ class Base
 				else
 					paths = paths.concat(result)
 
-		return if @findFirst is on then null else paths
+		if @findFirst == true
+			return null
+		else
+			return paths
+
+
+	#*******************************************************************************************************************
+	#										CHECKS
+	#*******************************************************************************************************************
+
+
+	checkExcludes: (_path) ->
+		for exclude in @excludes
+			if (new RegExp(exclude)).test(_path)
+				return false
+
+		return true
+
+
+	checkSystemFiles: (_path) ->
+		if @systemFiles == false
+			if path.basename(_path)[0] == '.' || _path.match(/~$/) != null
+				return false
+
+		return true
+
+
+	checkFilters: (_path, stats) ->
+		for filter in @filters
+			if !filter(stats, _path)
+				return false
+
+		return true
+
+
+	checkFile: (_path, stats, mask, type) ->
+		if type == 'all' || (type == 'files' && stats.isFile()) || (type == 'directories' && stats.isDirectory())
+			if mask == null || (mask != null && (new RegExp(mask, 'g')).test(_path))
+				if !@checkFilters(_path, stats)
+					return 0
+
+				return 1
+
+		return 2
 
 
 	#*******************************************************************************************************************
