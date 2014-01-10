@@ -94,7 +94,6 @@ class Base
 		try
 			read = fs.readdirSync(dir)
 		catch err
-			throw err
 			return if @findFirst is on then null else paths
 
 		for _path in read
