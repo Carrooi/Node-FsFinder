@@ -2,6 +2,7 @@ Helpers = require './Helpers'
 
 path = require 'path'
 fs = require 'fs'
+Q = require 'q'
 
 class Base
 
@@ -94,7 +95,7 @@ class Base
 		try
 			read = fs.readdirSync(dir)
 		catch err
-			if @findFirst
+			if @findFirst == true
 				return null
 
 			return paths
@@ -122,9 +123,9 @@ class Base
 
 			if stats.isDirectory() && @recursive == true
 				result = @getPathsSync(type, mask, _path)
-				if @findFirst is on && typeof result == 'string'
+				if @findFirst == true && typeof result == 'string'
 					return result
-				else if @findFirst is on && result == null
+				else if @findFirst == true && result == null
 					continue
 				else
 					paths = paths.concat(result)
