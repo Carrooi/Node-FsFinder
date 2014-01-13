@@ -3,6 +3,7 @@ Helpers = require './Helpers'
 path = require 'path'
 fs = require 'fs'
 Q = require 'q'
+async = require 'async'
 
 class Base
 
@@ -150,24 +151,65 @@ class Base
 			return paths
 
 
-	getPathsAsync: (type = 'all', mask = null, dir = @directory) ->
-		deferred = Q.defer()
-		result = []
+	getPathsAsync: (fn, type = 'all', mask = null, dir = @directory) ->
+		paths = []
 
-		Q.nfcall(fs.readdir, dir).then( (paths) =>
-			for _path in paths
-				_path = path.join(dir, _path)
+		fs.readdir(dir, (err, read) =>
+			if err
+				fn(if @findFirst == true then null else paths)
+			else
+				nextPaths = []
 
-				if !@checkExcludes(_path) || !@checkSystemFiles(_path)
-					continue
+				for _path in read
+					_path = path.join(dir, _path)
 
+					continue if !@checkExcludes(_path) || !@checkSystemFiles(_path)
 
+					nextPaths.push(_path)
 
-		).fail( =>
-			deferred.resolve(if @findFiles == true then null else [])
+				files = {}
+				async.each(nextPaths, (item, cb) ->
+					fs.stat(item, (err, stats) ->
+						files[item] = stats if !err
+						cb()
+					)
+				, =>
+					subDirectories = []
+					for file, stats of files
+						switch @checkFile(file, stats, mask, type)
+							when 0
+								continue
+
+							when 1
+								if @findFirst == true
+									fn(file)
+									return null
+
+								paths.push(file)
+
+						if stats.isDirectory() && @recursive == true
+							subDirectories.push(file)
+
+					if subDirectories.length == 0
+						fn(if @findFirst == true then null else paths)
+					else
+						async.each(subDirectories, (item, cb) =>
+							@getPathsAsync( (result) =>
+								if @findFirst == true && typeof result == 'string'
+									fn(result)
+									cb(new Error 'Fake error')
+								else if @findFirst == true && result == null
+									cb()
+								else
+									paths = paths.concat(result)
+									cb()
+							, type, mask, item)
+						, (err) ->
+							if !err
+								fn(paths)
+						)
+				)
 		)
-
-		return deferred.promise
 
 
 	#*******************************************************************************************************************

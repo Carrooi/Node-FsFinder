@@ -29,7 +29,7 @@ tree =
 	three: ''
 	two: ''
 
-describe 'Finder', ->
+describe 'Finder.sync', ->
 
 	beforeEach( ->
 		fs = Finder.mock(tree)
@@ -47,7 +47,7 @@ describe 'Finder', ->
 	describe '#findFiles()', ->
 
 		it 'should return file names from root folder', ->
-			expect(Finder.in('/').findFiles()).to.be.eql([
+			expect(Finder.in('/').findFiles()).to.have.members([
 				"/0"
 				"/1"
 				"/five"
@@ -59,7 +59,7 @@ describe 'Finder', ->
 	describe '#findDirectories()', ->
 
 		it 'should return directory names from root folder', ->
-			expect(Finder.in('/').findDirectories()).to.be.eql([
+			expect(Finder.in('/').findDirectories()).to.have.members([
 				"/eight"
 				"/seven"
 				"/six"
@@ -68,12 +68,33 @@ describe 'Finder', ->
 	describe '#find()', ->
 
 		it 'should return file and directory names from root folder', ->
-			expect(Finder.in('/').find()).to.be.eql([
+			expect(Finder.in('/').find()).to.have.members([
 				"/0"
 				"/1"
 				"/eight"
 				"/seven"
 				"/six"
+				"/five"
+				"/one"
+				"/three"
+				"/two"
+			])
+
+	describe '#recursive()', ->
+
+		it 'should return file names recursively from find* methods', ->
+			expect(Finder.from('/').findFiles()).to.have.members([
+				"/0"
+				"/1"
+				"/eight/3/4/file.json"
+				"/eight/other.js"
+				"/eight/package.json"
+				"/seven/13"
+				"/seven/14"
+				"/seven/twelve"
+				"/six/eleven"
+				"/six/nine"
+				"/six/ten"
 				"/five"
 				"/one"
 				"/three"
@@ -103,31 +124,10 @@ describe 'Finder', ->
 		it 'should return first file when looking into parents recursively', ->
 			expect(Finder.from("/eight/3/4").lookUp(4).findFirst().findFiles('twelve')).to.equal("/seven/twelve")
 
-	describe '#recursive()', ->
-
-		it 'should return file names recursively from find* methods', ->
-			expect(Finder.from('/').findFiles()).to.be.eql([
-				"/0"
-				"/1"
-				"/eight/3/4/file.json"
-				"/eight/other.js"
-				"/eight/package.json"
-				"/seven/13"
-				"/seven/14"
-				"/seven/twelve"
-				"/six/eleven"
-				"/six/nine"
-				"/six/ten"
-				"/five"
-				"/one"
-				"/three"
-				"/two"
-			])
-
 	describe '#exclude()', ->
 
 		it 'should return files which has not got numbers in name', ->
-			expect(Finder.in('/').exclude(['<[0-9]>']).findFiles()).to.be.eql([
+			expect(Finder.in('/').exclude(['<[0-9]>']).findFiles()).to.have.members([
 				"/five"
 				"/one"
 				"/three"
@@ -137,7 +137,7 @@ describe 'Finder', ->
 	describe '#showSystemFiles()', ->
 
 		it 'should return also system, hide and temp files', ->
-			expect(Finder.in('/').showSystemFiles().findFiles()).to.be.eql([
+			expect(Finder.in('/').showSystemFiles().findFiles()).to.have.members([
 				"/0"
 				"/1"
 				"/.cache"
@@ -151,12 +151,12 @@ describe 'Finder', ->
 	describe '#lookUp()', ->
 
 		it 'should return path to file in parent directory', ->
-			expect(Finder.in("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js')).to.be.eql([
+			expect(Finder.in("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js')).to.have.members([
 				"/eight/._.js"
 			])
 
 		it 'should return first file in parent directorz with depth set by string', ->
-			expect(Finder.in("/eight").lookUp('/').findFiles('package.json')).to.be.eql([
+			expect(Finder.in("/eight").lookUp('/').findFiles('package.json')).to.have.members([
 				"/eight/package.json"
 			])
 
@@ -164,31 +164,32 @@ describe 'Finder', ->
 			expect(Finder.in('/').lookUp('/').findFiles('package.json')).to.be.eql([])
 
 		it 'should return path to file in parent directory recursively', ->
-			expect(Finder.from("/eight/3/4").lookUp(4).findFiles('twelve')).to.be.eql([
+			expect(Finder.from("/eight/3/4").lookUp(4).findFiles('twelve')).to.have.members([
 				"/seven/twelve"
 			])
 
 		it 'should return first file in parent directories with depth set by string', ->
-			expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.be.eql([
+			expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.have.members([
 				"/seven/twelve"
 			])
 
 	describe '#size()', ->
 
 		it 'should return files with size between 2000B and 3000B', ->
-			expect(Finder.in('/').size('>=', 9).size('<=', 11).findFiles()).to.be.eql([
+			expect(Finder.in('/').size('>=', 9).size('<=', 11).findFiles()).to.have.members([
 				"/five"
 			])
 
 	describe '#date()', ->
 
-		it 'should return files which were changed in less than 1 second ago', ->
-			fs.writeFileSync("/two", 'just some changes')
+		it 'should return files which were changed in less than 1 second ago', (done) ->
 			setTimeout( ->
-				expect(Finder.in('/').date('>', seconds: 1).findFiles()).to.be.eql([
+				fs.writeFileSync("/two", 'just some changes')
+				expect(Finder.in('/').date('>', milliseconds: 100).findFiles()).to.have.members([
 					"/two"
 				])
-			, 1100)
+				done()
+			, 200)
 
 	describe '#filter()', ->
 
@@ -196,7 +197,7 @@ describe 'Finder', ->
 			filter = (stat, file) ->
 				name = path.basename file, path.extname(file)
 				return name.length == 3
-			expect(Finder.in('/').filter(filter).findFiles()).to.be.eql([
+			expect(Finder.in('/').filter(filter).findFiles()).to.have.members([
 				"/one"
 				"/two"
 			])

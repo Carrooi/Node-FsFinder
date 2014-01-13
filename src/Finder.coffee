@@ -30,11 +30,19 @@ class Finder extends Base
 		return (new Finder(path.directory)).recursively().find(path.mask, fn, type)
 
 
-	@findFiles: (path, fn = null) ->
+	@findFiles: (path = null, fn = null) ->
+		if isFunction(path)
+			fn = path
+			path = null
+
 		return Finder.find(path, fn, 'files')
 
 
-	@findDirectories: (path, fn = null) ->
+	@findDirectories: (path = null, fn = null) ->
+		if isFunction(path)
+			fn = path
+			path = null
+
 		return Finder.find(path, fn, 'directories')
 
 
@@ -45,6 +53,7 @@ class Finder extends Base
 
 	find: (mask = null, fn = null, type = 'all') ->
 		if isFunction(mask)
+			type = fn
 			fn = mask
 			mask = null
 
@@ -54,12 +63,12 @@ class Finder extends Base
 			if fn == null
 				return @getPathsFromParentsSync(mask, type)
 			else
-				return @getPathsFromParentsAsync(mask, type, fn)
+				return @getPathsFromParentsAsync(fn, mask, type)
 		else
 			if fn == null
 				return @getPathsSync(type, mask)
 			else
-				return @getPathsAsync(type, mask, fn)
+				return @getPathsAsync(fn, type, mask)
 
 
 	findFiles: (mask = null, fn = null) ->

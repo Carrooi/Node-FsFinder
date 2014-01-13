@@ -41,7 +41,7 @@
     two: ''
   };
 
-  describe('Finder', function() {
+  describe('Finder.sync', function() {
     beforeEach(function() {
       return fs = Finder.mock(tree);
     });
@@ -57,17 +57,22 @@
     });
     describe('#findFiles()', function() {
       return it('should return file names from root folder', function() {
-        return expect(Finder["in"]('/').findFiles()).to.be.eql(["/0", "/1", "/five", "/one", "/three", "/two"]);
+        return expect(Finder["in"]('/').findFiles()).to.have.members(["/0", "/1", "/five", "/one", "/three", "/two"]);
       });
     });
     describe('#findDirectories()', function() {
       return it('should return directory names from root folder', function() {
-        return expect(Finder["in"]('/').findDirectories()).to.be.eql(["/eight", "/seven", "/six"]);
+        return expect(Finder["in"]('/').findDirectories()).to.have.members(["/eight", "/seven", "/six"]);
       });
     });
     describe('#find()', function() {
       return it('should return file and directory names from root folder', function() {
-        return expect(Finder["in"]('/').find()).to.be.eql(["/0", "/1", "/eight", "/seven", "/six", "/five", "/one", "/three", "/two"]);
+        return expect(Finder["in"]('/').find()).to.have.members(["/0", "/1", "/eight", "/seven", "/six", "/five", "/one", "/three", "/two"]);
+      });
+    });
+    describe('#recursive()', function() {
+      return it('should return file names recursively from find* methods', function() {
+        return expect(Finder.from('/').findFiles()).to.have.members(["/0", "/1", "/eight/3/4/file.json", "/eight/other.js", "/eight/package.json", "/seven/13", "/seven/14", "/seven/twelve", "/six/eleven", "/six/nine", "/six/ten", "/five", "/one", "/three", "/two"]);
       });
     });
     describe('#findFirst()', function() {
@@ -93,51 +98,47 @@
         return expect(Finder.from("/eight/3/4").lookUp(4).findFirst().findFiles('twelve')).to.equal("/seven/twelve");
       });
     });
-    describe('#recursive()', function() {
-      return it('should return file names recursively from find* methods', function() {
-        return expect(Finder.from('/').findFiles()).to.be.eql(["/0", "/1", "/eight/3/4/file.json", "/eight/other.js", "/eight/package.json", "/seven/13", "/seven/14", "/seven/twelve", "/six/eleven", "/six/nine", "/six/ten", "/five", "/one", "/three", "/two"]);
-      });
-    });
     describe('#exclude()', function() {
       return it('should return files which has not got numbers in name', function() {
-        return expect(Finder["in"]('/').exclude(['<[0-9]>']).findFiles()).to.be.eql(["/five", "/one", "/three", "/two"]);
+        return expect(Finder["in"]('/').exclude(['<[0-9]>']).findFiles()).to.have.members(["/five", "/one", "/three", "/two"]);
       });
     });
     describe('#showSystemFiles()', function() {
       return it('should return also system, hide and temp files', function() {
-        return expect(Finder["in"]('/').showSystemFiles().findFiles()).to.be.eql(["/0", "/1", "/.cache", "/five", "/five~", "/one", "/three", "/two"]);
+        return expect(Finder["in"]('/').showSystemFiles().findFiles()).to.have.members(["/0", "/1", "/.cache", "/five", "/five~", "/one", "/three", "/two"]);
       });
     });
     describe('#lookUp()', function() {
       it('should return path to file in parent directory', function() {
-        return expect(Finder["in"]("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js')).to.be.eql(["/eight/._.js"]);
+        return expect(Finder["in"]("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js')).to.have.members(["/eight/._.js"]);
       });
       it('should return first file in parent directorz with depth set by string', function() {
-        return expect(Finder["in"]("/eight").lookUp('/').findFiles('package.json')).to.be.eql(["/eight/package.json"]);
+        return expect(Finder["in"]("/eight").lookUp('/').findFiles('package.json')).to.have.members(["/eight/package.json"]);
       });
       it('should return null when limit parent is the same like searched directory and file is not there', function() {
         return expect(Finder["in"]('/').lookUp('/').findFiles('package.json')).to.be.eql([]);
       });
       it('should return path to file in parent directory recursively', function() {
-        return expect(Finder.from("/eight/3/4").lookUp(4).findFiles('twelve')).to.be.eql(["/seven/twelve"]);
+        return expect(Finder.from("/eight/3/4").lookUp(4).findFiles('twelve')).to.have.members(["/seven/twelve"]);
       });
       return it('should return first file in parent directories with depth set by string', function() {
-        return expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.be.eql(["/seven/twelve"]);
+        return expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.have.members(["/seven/twelve"]);
       });
     });
     describe('#size()', function() {
       return it('should return files with size between 2000B and 3000B', function() {
-        return expect(Finder["in"]('/').size('>=', 9).size('<=', 11).findFiles()).to.be.eql(["/five"]);
+        return expect(Finder["in"]('/').size('>=', 9).size('<=', 11).findFiles()).to.have.members(["/five"]);
       });
     });
     describe('#date()', function() {
-      return it('should return files which were changed in less than 1 second ago', function() {
-        fs.writeFileSync("/two", 'just some changes');
+      return it('should return files which were changed in less than 1 second ago', function(done) {
         return setTimeout(function() {
-          return expect(Finder["in"]('/').date('>', {
-            seconds: 1
-          }).findFiles()).to.be.eql(["/two"]);
-        }, 1100);
+          fs.writeFileSync("/two", 'just some changes');
+          expect(Finder["in"]('/').date('>', {
+            milliseconds: 100
+          }).findFiles()).to.have.members(["/two"]);
+          return done();
+        }, 200);
       });
     });
     return describe('#filter()', function() {
@@ -148,7 +149,7 @@
           name = path.basename(file, path.extname(file));
           return name.length === 3;
         };
-        return expect(Finder["in"]('/').filter(filter).findFiles()).to.be.eql(["/one", "/two"]);
+        return expect(Finder["in"]('/').filter(filter).findFiles()).to.have.members(["/one", "/two"]);
       });
     });
   });
