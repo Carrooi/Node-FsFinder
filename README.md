@@ -1,3 +1,9 @@
+[![NPM version](https://badge.fury.io/js/fs-finder.png)](http://badge.fury.io/js/fs-finder)
+[![Dependency Status](https://gemnasium.com/sakren/node-fs-finder.png)](https://gemnasium.com/sakren/node-fs-finder)
+[![Build Status](https://travis-ci.org/sakren/node-fs-finder.png?branch=master)](https://travis-ci.org/sakren/node-fs-finder)
+
+[![Donate](http://b.repl.ca/v1/donate-PayPal-brightgreen.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2CQPWKW8D3BWS)
+
 # fs-finder
 
 File system finder inspired by finder in [Nette framework](http://doc.nette.org/en/finder).
