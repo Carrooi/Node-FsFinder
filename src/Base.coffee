@@ -71,11 +71,14 @@ class Base
 		return @
 
 
-	exclude: (excludes) ->
+	exclude: (excludes, exactly = false) ->
 		if typeof excludes == 'string' then excludes = [excludes]
 
 		result = []
 		for exclude in excludes
+			if exactly
+				exclude = "<^>#{exclude}<$>"
+
 			result.push(Helpers.normalizePattern(exclude))
 
 		@excludes = @excludes.concat(result)
@@ -168,9 +171,11 @@ class Base
 					nextPaths.push(_path)
 
 				files = {}
-				async.each(nextPaths, (item, cb) ->
+				async.eachSeries(nextPaths, (item, cb) ->
 					fs.stat(item, (err, stats) ->
-						files[item] = stats if !err
+						if !err
+							files[item] = stats
+
 						cb()
 					)
 				, =>
@@ -193,7 +198,7 @@ class Base
 					if subDirectories.length == 0
 						fn(if @findFirst == true then null else paths)
 					else
-						async.each(subDirectories, (item, cb) =>
+						async.eachSeries(subDirectories, (item, cb) =>
 							@getPathsAsync( (result) =>
 								if @findFirst == true && typeof result == 'string'
 									fn(result)
@@ -258,89 +263,98 @@ class Base
 
 
 	getPathsFromParentsSync: (mask = null, type = 'all') ->
-		directory = @directory
-		paths = @getPathsSync(type, mask, directory)
+		Finder = require './Finder'
 
-		if @findFirst is on && typeof paths == 'string'
-			return paths
+		parentPaths = Helpers.expandPath(@directory)
+		result = []
 
-		@exclude(directory)
-
-		if @up == true
-			depth = directory.match(/\//g).length
-		else if typeof @up == 'string'
-			if @up == directory
-				return if @findFirst is on then null else paths
-
-			match = path.relative(@up, directory).match(/\//g)
-			depth = if match == null then 2 else match.length + 2
-		else
-			depth = @up - 1
-
-		for i in [0..depth - 1]
-			directory = path.dirname(directory)
-			result = @getPathsSync(type, mask, directory)
-
-			if @findFirst is on && typeof result == 'string'
-				return result
-			else if @findFirst is on && result == null
+		previous = null
+		breakAtEnd = false
+		for parentPath, i in parentPaths
+			if @up == true
 				# continue
-			else
-				paths = paths.concat(result)
+			else if typeof @up == 'string' && @up == parentPath
+				breakAtEnd = true
+			else if typeof @up == 'number' && @up <= i
+				break
 
-			@exclude(directory)
+			finder = new Finder(parentPath)
 
-		return if @findFirst is on then null else paths
+			finder.recursive = @recursive
+			finder.excludes = @excludes
+			finder.filters = @filters
+			finder.systemFiles = @systemFiles
+			finder.findFirst = @findFirst == true
+
+			if previous != null
+				finder.exclude(previous, true)
+
+			found = finder.getPathsSync(type, mask)
+			if @findFirst == true && typeof found == 'string'
+				return found
+			else if @findFirst == true && found == null
+				# continue
+			else if found.length > 0
+				result = result.concat(found)
+
+			if breakAtEnd
+				break
+
+			previous = parentPath
+
+		return if @findFirst == true then null else result
 
 
 	getPathsFromParentsAsync: (fn, mask = null, type = 'all') ->
-		directory = @directory
-		paths = []
+		Finder = require './Finder'
 
-		@getPathsAsync( (_paths) =>
-			console.log _paths
-			paths = _paths
+		parentPaths = Helpers.expandPath(@directory)
+		result = []
 
-			if @findFirst == true && typeof paths == 'string'
-				fn(paths)
-			else
-				@exclude(directory)
+		previous = null
+		breakAtEnd = false
+		finders = []
+		for parentPath, i in parentPaths
+			if @up == true
+				# continue
+			else if typeof @up == 'string' && @up == parentPath
+				breakAtEnd = true
+			else if typeof @up == 'number' && @up <= i
+				break
 
-				if @up == true
-					depth = directory.match(/\//g).length
-				else if typeof @up == 'string'
-					if @up == directory
-						fn(if @findFirst == true then null else paths)
-						return null
+			finder = new Finder(parentPath)
 
-					match = path.relative(@up, directory).match(/\//g)
-					depth = if match == null then 2 else match.length + 2
+			finder.recursive = @recursive
+			finder.excludes = @excludes
+			finder.filters = @filters
+			finder.systemFiles = @systemFiles
+			finder.findFirst = @findFirst == true
+
+			if previous != null
+				finder.exclude(previous, true)
+
+			finders.push(finder)
+
+			if breakAtEnd
+				break
+
+			previous = parentPath
+
+		async.eachSeries(finders, (finder, cb) =>
+			finder.getPathsAsync( (found) =>
+				if @findFirst == true && typeof found == 'string'
+					fn(found)
+					cb(new Error 'Fake error')
+				else if @findFirst == true && found == null
+					cb()
 				else
-					depth = @up - 1
-
-				directories = []
-				for i in [0..depth - 1]
-					directories.push(path.dirname(directory))
-					@exclude(directories[directories.length - 1])
-
-				async.each(directories, (item, cb) =>
-					@getPathsAsync( (result) =>
-						#console.log item
-						#console.log result
-						if @findFirst == true && typeof result == 'string'
-							fn(result)
-							cb(new Error 'Fake error')
-						else if @findFirst == true && result == null
-							cb()
-						else
-							paths = paths.concat(result)
-							cb()
-					, type, mask, item)
-				, (err) =>
-					if !err
-						fn(if @findFirst == true then null else paths)
-				)
-		, type, mask, directory)
+					result = result.concat(found)
+					cb()
+			, type, mask)
+		, (err) =>
+			if !err
+				fn(if @findFirst == true then null else result)
+		)
 
 
 module.exports = Base

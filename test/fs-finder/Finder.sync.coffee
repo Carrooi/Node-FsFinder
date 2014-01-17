@@ -155,7 +155,7 @@ describe 'Finder.sync', ->
 				"/eight/._.js"
 			])
 
-		it 'should return first file in parent directorz with depth set by string', ->
+		it 'should return first file in parent directory with depth set by string', ->
 			expect(Finder.in("/eight").lookUp('/').findFiles('package.json')).to.have.members([
 				"/eight/package.json"
 			])

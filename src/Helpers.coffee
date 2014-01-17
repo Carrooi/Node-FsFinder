@@ -1,4 +1,5 @@
 escape = require 'escape-regexp'
+path = require 'path'
 
 class Helpers
 
@@ -6,10 +7,10 @@ class Helpers
 	@ASTERISK_PATTERN = '<[0-9a-zA-Z/.-_ ]+>'
 
 
-	@parseDirectory: (path) ->
+	@parseDirectory: (_path) ->
 		mask = null
-		asterisk = path.indexOf('*')
-		regexp = path.indexOf('<')
+		asterisk = _path.indexOf('*')
+		regexp = _path.indexOf('<')
 
 		if asterisk != -1 || regexp != -1
 			if asterisk == -1 || (asterisk != -1 && regexp != -1 && asterisk > regexp)
@@ -17,11 +18,11 @@ class Helpers
 			else if regexp == -1 || (regexp != -1 && asterisk != -1 && asterisk <= regexp)
 				splitter = asterisk
 
-			mask = path.substr(splitter)
-			path = path.substr(0, splitter)
+			mask = _path.substr(splitter)
+			_path = _path.substr(0, splitter)
 
 		return {
-			directory: path
+			directory: _path
 			mask: mask
 		}
 
@@ -49,6 +50,19 @@ class Helpers
 			pattern = escape(pattern)
 
 		return pattern
+
+
+	@expandPath: (_path, isFile = false) ->
+		if isFile
+			_path = path.dirname(_path)
+
+		current = _path
+		result = [current]
+		while current != '/'
+			result.push(path.dirname(current))
+			current = path.dirname(current)
+
+		return result
 
 
 module.exports = Helpers

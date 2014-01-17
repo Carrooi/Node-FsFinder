@@ -148,23 +148,35 @@
       });
     });
     describe('#lookUp()', function() {
-      it.skip('should return path to file in parent directory', function(done) {
+      it('should return path to file in parent directory', function(done) {
         return Finder["in"]("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js', function(files) {
           expect(files).to.have.members(["/eight/._.js"]);
           return done();
         });
       });
-      it.skip('should return first file in parent directorz with depth set by string', function() {
-        return expect(Finder["in"]("/eight").lookUp('/').findFiles('package.json')).to.be.eql(["/eight/package.json"]);
+      it('should return first file in parent directory with depth set by string', function(done) {
+        return Finder["in"]("/eight").lookUp('/').findFiles('package.json', function(files) {
+          expect(files).to.be.eql(["/eight/package.json"]);
+          return done();
+        });
       });
-      it.skip('should return null when limit parent is the same like searched directory and file is not there', function() {
-        return expect(Finder["in"]('/').lookUp('/').findFiles('package.json')).to.be.eql([]);
+      it('should return null when limit parent is the same like searched directory and file is not there', function(done) {
+        return Finder["in"]('/').lookUp('/').findFiles('package.json', function(files) {
+          expect(files).to.be.eql([]);
+          return done();
+        });
       });
-      it.skip('should return path to file in parent directory recursively', function() {
-        return expect(Finder.from("/eight/3/4").lookUp(4).findFiles('twelve')).to.be.eql(["/seven/twelve"]);
+      it('should return path to file in parent directory recursively', function(done) {
+        return Finder.from("/eight/3/4").lookUp(4).findFiles('twelve', function(files) {
+          expect(files).to.be.eql(["/seven/twelve"]);
+          return done();
+        });
       });
-      return it.skip('should return first file in parent directories with depth set by string', function() {
-        return expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.be.eql(["/seven/twelve"]);
+      return it('should return first file in parent directories with depth set by string', function(done) {
+        return Finder.from("/eight/3/4").lookUp('/').findFiles('twelve', function(files) {
+          expect(files).to.be.eql(["/seven/twelve"]);
+          return done();
+        });
       });
     });
     describe('#size()', function() {

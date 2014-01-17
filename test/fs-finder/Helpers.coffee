@@ -21,3 +21,16 @@ describe 'Helpers', ->
 				directory: ''
 				mask: '*<e$>'
 			)
+
+	describe '#expandPath()', ->
+
+		it 'should return array with expanded paths', ->
+			expect(Helpers.expandPath('/var/www/web/project/about-me/www/index.php', true)).to.be.eql([
+				'/var/www/web/project/about-me/www'
+				'/var/www/web/project/about-me'
+				'/var/www/web/project'
+				'/var/www/web'
+				'/var/www'
+				'/var'
+				'/'
+			])

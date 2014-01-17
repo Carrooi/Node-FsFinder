@@ -189,7 +189,7 @@ describe 'Finder.async', ->
 
 	describe '#lookUp()', ->
 
-		it.skip 'should return path to file in parent directory', (done) ->
+		it 'should return path to file in parent directory', (done) ->
 			Finder.in("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js', (files) ->
 				expect(files).to.have.members([
 					"/eight/._.js"
@@ -197,23 +197,35 @@ describe 'Finder.async', ->
 				done()
 			)
 
-		it.skip 'should return first file in parent directorz with depth set by string', ->
-			expect(Finder.in("/eight").lookUp('/').findFiles('package.json')).to.be.eql([
-				"/eight/package.json"
-			])
+		it 'should return first file in parent directory with depth set by string', (done) ->
+			Finder.in("/eight").lookUp('/').findFiles('package.json', (files) ->
+				expect(files).to.be.eql([
+					"/eight/package.json"
+				])
+				done()
+			)
 
-		it.skip 'should return null when limit parent is the same like searched directory and file is not there', ->
-			expect(Finder.in('/').lookUp('/').findFiles('package.json')).to.be.eql([])
+		it 'should return null when limit parent is the same like searched directory and file is not there', (done) ->
+			Finder.in('/').lookUp('/').findFiles('package.json', (files) ->
+				expect(files).to.be.eql([])
+				done()
+			)
 
-		it.skip 'should return path to file in parent directory recursively', ->
-			expect(Finder.from("/eight/3/4").lookUp(4).findFiles('twelve')).to.be.eql([
-				"/seven/twelve"
-			])
+		it 'should return path to file in parent directory recursively', (done) ->
+			Finder.from("/eight/3/4").lookUp(4).findFiles('twelve', (files) ->
+				expect(files).to.be.eql([
+					"/seven/twelve"
+				])
+				done()
+			)
 
-		it.skip 'should return first file in parent directories with depth set by string', ->
-			expect(Finder.from("/eight/3/4").lookUp('/').findFiles('twelve')).to.be.eql([
-				"/seven/twelve"
-			])
+		it 'should return first file in parent directories with depth set by string', (done) ->
+			Finder.from("/eight/3/4").lookUp('/').findFiles('twelve', (files) ->
+				expect(files).to.be.eql([
+					"/seven/twelve"
+				])
+				done()
+			)
 
 	describe '#size()', ->
 

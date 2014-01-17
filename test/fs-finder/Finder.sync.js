@@ -112,7 +112,7 @@
       it('should return path to file in parent directory', function() {
         return expect(Finder["in"]("/eight/3/4").lookUp(4).showSystemFiles().findFiles('._.js')).to.have.members(["/eight/._.js"]);
       });
-      it('should return first file in parent directorz with depth set by string', function() {
+      it('should return first file in parent directory with depth set by string', function() {
         return expect(Finder["in"]("/eight").lookUp('/').findFiles('package.json')).to.have.members(["/eight/package.json"]);
       });
       it('should return null when limit parent is the same like searched directory and file is not there', function() {
