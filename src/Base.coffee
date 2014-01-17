@@ -22,10 +22,6 @@ class Base
 
 	_findFirst: false
 
-	_async: true
-
-	_data: null
-
 
 	constructor: (directory) ->
 		directory = path.resolve(directory)
@@ -55,16 +51,6 @@ class Base
 	#*******************************************************************************************************************
 	#										SETUP
 	#*******************************************************************************************************************
-
-
-	sync: ->
-		@_async = false
-		return @
-
-
-	async: ->
-		@_async = true
-		return @
 
 
 	recursively: (@recursive = true) ->
