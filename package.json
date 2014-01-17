@@ -27,8 +27,7 @@
 		"operator-compare": "~1.0.1",
 		"escape-regexp": "~0.0.1",
 		"q": "~1.0.0",
-		"async": "~0.2.9",
-		"callsite": "latest"
+		"async": "~0.2.9"
 	},
 	"devDependencies": {
 		"chai": "~1.8.1",
