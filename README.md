@@ -177,6 +177,16 @@ If there is no matching path, null will be returned.
 var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 ```
 
+There is also shortcut:
+```
+var file = Finder.from(dir).findFile('<[0-9]{2}>');
+```
+
+or:
+```
+var directory = Finder.from(dir).findDirectory();
+```
+
 ## Tests
 
 ```
