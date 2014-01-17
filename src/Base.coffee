@@ -20,7 +20,7 @@ class Base
 
 	up: false
 
-	findFirst: false
+	_findFirst: false
 
 	_async: true
 
@@ -93,7 +93,7 @@ class Base
 		return @
 
 
-	findFirst: (@findFirst = true) ->
+	findFirst: (@_findFirst = true) ->
 		return @
 
 
@@ -113,7 +113,7 @@ class Base
 		try
 			read = fs.readdirSync(dir)
 		catch err
-			if @findFirst == true
+			if @_findFirst == true
 				return null
 
 			return paths
@@ -134,21 +134,21 @@ class Base
 					continue
 
 				when 1
-					if @findFirst == true
+					if @_findFirst == true
 						return _path
 
 					paths.push(_path)
 
 			if stats.isDirectory() && @recursive == true
 				result = @getPathsSync(type, mask, _path)
-				if @findFirst == true && typeof result == 'string'
+				if @_findFirst == true && typeof result == 'string'
 					return result
-				else if @findFirst == true && result == null
+				else if @_findFirst == true && result == null
 					continue
 				else
 					paths = paths.concat(result)
 
-		if @findFirst == true
+		if @_findFirst == true
 			return null
 		else
 			return paths
@@ -159,7 +159,7 @@ class Base
 
 		fs.readdir(dir, (err, read) =>
 			if err
-				fn(if @findFirst == true then null else paths)
+				fn(if @_findFirst == true then null else paths)
 			else
 				nextPaths = []
 
@@ -186,7 +186,7 @@ class Base
 								continue
 
 							when 1
-								if @findFirst == true
+								if @_findFirst == true
 									fn(file)
 									return null
 
@@ -196,14 +196,14 @@ class Base
 							subDirectories.push(file)
 
 					if subDirectories.length == 0
-						fn(if @findFirst == true then null else paths)
+						fn(if @_findFirst == true then null else paths)
 					else
 						async.eachSeries(subDirectories, (item, cb) =>
 							@getPathsAsync( (result) =>
-								if @findFirst == true && typeof result == 'string'
+								if @_findFirst == true && typeof result == 'string'
 									fn(result)
 									cb(new Error 'Fake error')
-								else if @findFirst == true && result == null
+								else if @_findFirst == true && result == null
 									cb()
 								else
 									paths = paths.concat(result)
@@ -284,15 +284,15 @@ class Base
 			finder.excludes = @excludes
 			finder.filters = @filters
 			finder.systemFiles = @systemFiles
-			finder.findFirst = @findFirst == true
+			finder._findFirst = @_findFirst == true
 
 			if previous != null
 				finder.exclude(previous, true)
 
 			found = finder.getPathsSync(type, mask)
-			if @findFirst == true && typeof found == 'string'
+			if @_findFirst == true && typeof found == 'string'
 				return found
-			else if @findFirst == true && found == null
+			else if @_findFirst == true && found == null
 				# continue
 			else if found.length > 0
 				result = result.concat(found)
@@ -302,7 +302,7 @@ class Base
 
 			previous = parentPath
 
-		return if @findFirst == true then null else result
+		return if @_findFirst == true then null else result
 
 
 	getPathsFromParentsAsync: (fn, mask = null, type = 'all') ->
@@ -328,7 +328,7 @@ class Base
 			finder.excludes = @excludes
 			finder.filters = @filters
 			finder.systemFiles = @systemFiles
-			finder.findFirst = @findFirst == true
+			finder._findFirst = @_findFirst == true
 
 			if previous != null
 				finder.exclude(previous, true)
@@ -342,10 +342,10 @@ class Base
 
 		async.eachSeries(finders, (finder, cb) =>
 			finder.getPathsAsync( (found) =>
-				if @findFirst == true && typeof found == 'string'
+				if @_findFirst == true && typeof found == 'string'
 					fn(found)
 					cb(new Error 'Fake error')
-				else if @findFirst == true && found == null
+				else if @_findFirst == true && found == null
 					cb()
 				else
 					result = result.concat(found)
@@ -353,7 +353,7 @@ class Base
 			, type, mask)
 		, (err) =>
 			if !err
-				fn(if @findFirst == true then null else result)
+				fn(if @_findFirst == true then null else result)
 		)
 
 
