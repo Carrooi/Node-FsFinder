@@ -1,3 +1,3 @@
-require('./fs-finder/Helpers');
-require('./fs-finder/Finder.sync');
-require('./fs-finder/Finder.async');
+require('./lib/Helpers');
+require('./lib/Finder.sync');
+require('./lib/Finder.async');
