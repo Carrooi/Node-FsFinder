@@ -8,7 +8,13 @@ File system finder inspired by finder in [Nette framework](http://doc.nette.org/
 $ npm install fs-finder
 ```
 
-## Searching files in directory
+## Searching
+
+There are two ways of searching for files or directories: `synchronous` and `asynchronous`.
+
+### Synchronous
+
+#### Searching files in directory
 
 ```
 var Finder = require('fs-finder');
@@ -16,16 +22,44 @@ var Finder = require('fs-finder');
 var files = Finder.in('/var/data/base-path').findFiles();		// returns array with file's names
 ```
 
-## Searching directories
+#### Searching directories
 
 ```
 var directories = Finder.in(baseDir).findDirectories();		// returns array with directories's names
 ```
 
-## Searching for files and directories
+#### Searching for files and directories
 
 ```
 var paths = Finder.in(baseDir).find();		// returns array with file's and directories's names
+```
+
+### Asynchronous
+
+If `fs-finder` find callback in find* methods, it will automatically use asynchronous searching.
+
+#### Searching files in directory
+
+```
+Finder.in('/var/data/base-path').findFiles(function(files) {
+	console.log(files);
+});
+```
+
+#### Searching directories
+
+```
+Finder.in(baseDir).findDirectories(function(directories) {
+	console.log(directories);
+});
+```
+
+#### Searching for files and directories
+
+```
+var paths = Finder.in(baseDir).find(function(paths) {
+	console.log(paths);
+});
 ```
 
 ## Recursive searching
@@ -38,6 +72,13 @@ var paths = Finder.from(baseDir).find();
 
 ```
 var files = Finder.from(baseDir).findFiles('*.coffee');
+```
+
+or asynchronous:
+```
+Finder.from(baseDir).findFiles('*.coffee', function(files) {
+	// do something with given list of files
+});
 ```
 
 In this example fs finder looks for all files in base directories recursively with '.coffee' in their name.
