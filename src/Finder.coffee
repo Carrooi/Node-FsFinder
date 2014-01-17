@@ -46,6 +46,22 @@ class Finder extends Base
 		return Finder.find(path, fn, 'directories')
 
 
+	@findFile: (path = null, fn = null) ->
+		if isFunction(path)
+			fn = path
+			path = null
+
+		return Finder.findFirst().find(path, fn, 'files')
+
+
+	@findDirectory: (path = null, fn = null) ->
+		if isFunction(path)
+			fn = path
+			path = null
+
+		return Finder.findFirst().find(path, fn, 'directories')
+
+
 	#*******************************************************************************************************************
 	#										FIND METHODS
 	#*******************************************************************************************************************
@@ -85,6 +101,22 @@ class Finder extends Base
 			mask = null
 
 		return @find(mask, fn, 'directories')
+
+
+	findFile: (mask = null, fn = null) ->
+		if isFunction(mask)
+			fn = mask
+			mask = null
+
+		return @findFirst().find(mask, fn, 'files')
+
+
+	findDirectory: (mask = null, fn = null) ->
+		if isFunction(mask)
+			fn = mask
+			mask = null
+
+		return @findFirst().find(mask, fn, 'directories')
 
 
 	#*******************************************************************************************************************
