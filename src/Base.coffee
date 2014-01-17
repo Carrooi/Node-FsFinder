@@ -293,4 +293,54 @@ class Base
 		return if @findFirst is on then null else paths
 
 
+	getPathsFromParentsAsync: (fn, mask = null, type = 'all') ->
+		directory = @directory
+		paths = []
+
+		@getPathsAsync( (_paths) =>
+			console.log _paths
+			paths = _paths
+
+			if @findFirst == true && typeof paths == 'string'
+				fn(paths)
+			else
+				@exclude(directory)
+
+				if @up == true
+					depth = directory.match(/\//g).length
+				else if typeof @up == 'string'
+					if @up == directory
+						fn(if @findFirst == true then null else paths)
+						return null
+
+					match = path.relative(@up, directory).match(/\//g)
+					depth = if match == null then 2 else match.length + 2
+				else
+					depth = @up - 1
+
+				directories = []
+				for i in [0..depth - 1]
+					directories.push(path.dirname(directory))
+					@exclude(directories[directories.length - 1])
+
+				async.each(directories, (item, cb) =>
+					@getPathsAsync( (result) =>
+						#console.log item
+						#console.log result
+						if @findFirst == true && typeof result == 'string'
+							fn(result)
+							cb(new Error 'Fake error')
+						else if @findFirst == true && result == null
+							cb()
+						else
+							paths = paths.concat(result)
+							cb()
+					, type, mask, item)
+				, (err) =>
+					if !err
+						fn(if @findFirst == true then null else paths)
+				)
+		, type, mask, directory)
+
+
 module.exports = Base

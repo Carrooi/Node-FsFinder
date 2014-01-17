@@ -145,11 +145,17 @@ describe 'Finder.async', ->
 				done()
 			)
 
-		it.skip 'should return null when looking into parents', (done) ->
-			expect(Finder.in("/eight/3/4").lookUp(4).findFirst().findFiles('twelve')).to.be.null
+		it 'should return null when looking into parents', (done) ->
+			Finder.in('/eight/3/4').lookUp(4).findFirst().findFiles('twelve', (file) ->
+				expect(file).to.be.null
+				done()
+			)
 
-		it.skip 'should return first file when looking into parents recursively', ->
-			expect(Finder.from("/eight/3/4").lookUp(4).findFirst().findFiles('twelve')).to.equal("/seven/twelve")
+		it 'should return first file when looking into parents recursively', (done) ->
+			Finder.from("/eight/3/4").lookUp(4).findFirst().findFiles('twelve', (file) ->
+				expect(file).to.equal("/seven/twelve")
+				done()
+			)
 
 	describe '#exclude()', ->
 

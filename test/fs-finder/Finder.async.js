@@ -118,11 +118,17 @@
           return done();
         });
       });
-      it.skip('should return null when looking into parents', function(done) {
-        return expect(Finder["in"]("/eight/3/4").lookUp(4).findFirst().findFiles('twelve')).to.be["null"];
+      it('should return null when looking into parents', function(done) {
+        return Finder["in"]('/eight/3/4').lookUp(4).findFirst().findFiles('twelve', function(file) {
+          expect(file).to.be["null"];
+          return done();
+        });
       });
-      return it.skip('should return first file when looking into parents recursively', function() {
-        return expect(Finder.from("/eight/3/4").lookUp(4).findFirst().findFiles('twelve')).to.equal("/seven/twelve");
+      return it('should return first file when looking into parents recursively', function(done) {
+        return Finder.from("/eight/3/4").lookUp(4).findFirst().findFiles('twelve', function(file) {
+          expect(file).to.equal("/seven/twelve");
+          return done();
+        });
       });
     });
     describe('#exclude()', function() {
