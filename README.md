@@ -222,11 +222,14 @@ afterEach(function() {
 });
 ```
 
-In fs variable is mocked fs module, so if you need to use fs module in your tests, just use this one.
+In fs variable is now mocked fs module, so if you need to use fs module in your tests, just use this one.
 
 ## Changelog
 
 * 1.8.0
+	+ Added asynchronous searching
+	+ Optimized searching
+	+ Using [fs-mock](https://github.com/sakren/node-fs-mock) for testing
 	+ Refactoring tests
 	+ Optimized dependencies
 	+ Better documentation
