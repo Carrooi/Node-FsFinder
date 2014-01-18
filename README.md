@@ -1,3 +1,9 @@
+[![NPM version](https://badge.fury.io/js/fs-finder.png)](http://badge.fury.io/js/fs-finder)
+[![Dependency Status](https://gemnasium.com/sakren/node-fs-finder.png)](https://gemnasium.com/sakren/node-fs-finder)
+[![Build Status](https://travis-ci.org/sakren/node-fs-finder.png?branch=master)](https://travis-ci.org/sakren/node-fs-finder)
+
+[![Donate](http://b.repl.ca/v1/donate-PayPal-brightgreen.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2CQPWKW8D3BWS)
+
 # fs-finder
 
 File system finder inspired by finder in [Nette framework](http://doc.nette.org/en/finder).
@@ -8,7 +14,13 @@ File system finder inspired by finder in [Nette framework](http://doc.nette.org/
 $ npm install fs-finder
 ```
 
-## Searching files in directory
+## Searching
+
+There are two ways of searching for files or directories: `synchronous` and `asynchronous`.
+
+### Synchronous
+
+#### Searching files in directory
 
 ```
 var Finder = require('fs-finder');
@@ -16,16 +28,44 @@ var Finder = require('fs-finder');
 var files = Finder.in('/var/data/base-path').findFiles();		// returns array with file's names
 ```
 
-## Searching directories
+#### Searching directories
 
 ```
 var directories = Finder.in(baseDir).findDirectories();		// returns array with directories's names
 ```
 
-## Searching for files and directories
+#### Searching for files and directories
 
 ```
 var paths = Finder.in(baseDir).find();		// returns array with file's and directories's names
+```
+
+### Asynchronous
+
+If `fs-finder` find callback in find* methods, it will automatically use asynchronous searching.
+
+#### Searching files in directory
+
+```
+Finder.in('/var/data/base-path').findFiles(function(files) {
+	console.log(files);
+});
+```
+
+#### Searching directories
+
+```
+Finder.in(baseDir).findDirectories(function(directories) {
+	console.log(directories);
+});
+```
+
+#### Searching for files and directories
+
+```
+var paths = Finder.in(baseDir).find(function(paths) {
+	console.log(paths);
+});
 ```
 
 ## Recursive searching
@@ -38,6 +78,13 @@ var paths = Finder.from(baseDir).find();
 
 ```
 var files = Finder.from(baseDir).findFiles('*.coffee');
+```
+
+or asynchronous:
+```
+Finder.from(baseDir).findFiles('*.coffee', function(files) {
+	// do something with given list of files
+});
 ```
 
 In this example fs finder looks for all files in base directories recursively with '.coffee' in their name.
@@ -136,15 +183,53 @@ If there is no matching path, null will be returned.
 var file = Finder.from(dir).findFirst().findFiles('<[0-9]{2}>');
 ```
 
+There is also shortcut:
+```
+var file = Finder.from(dir).findFile('<[0-9]{2}>');
+```
+
+or:
+```
+var directory = Finder.from(dir).findDirectory();
+```
+
 ## Tests
 
 ```
 $ npm test
 ```
 
+If you want to use fs-finder in your own tests, you can use it with [fs-mock](https://github.com/sakren/node-fs-mock)
+module, which is already build it.
+
+For more information how to use it, please read documentation for [fs-mock](https://github.com/sakren/node-fs-mock/blob/master/README.md).
+
+```
+var fs = null;
+
+beforeEach(function() {
+	fs = Finder.mock({
+		'var': {
+			'www': {
+				'index.php': '<?php echo "hello; ?>'
+			}
+		}
+	});
+});
+
+afterEach(function() {
+	Finder.restore();
+});
+```
+
+In fs variable is now mocked fs module, so if you need to use fs module in your tests, just use this one.
+
 ## Changelog
 
 * 1.8.0
+	+ Added asynchronous searching
+	+ Optimized searching
+	+ Using [fs-mock](https://github.com/sakren/node-fs-mock) for testing
 	+ Refactoring tests
 	+ Optimized dependencies
 	+ Better documentation
