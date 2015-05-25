@@ -1,42 +1,45 @@
 {
-	"name": "fs-finder",
-	"description": "File system recursive finder",
-	"version": "1.8.0",
-	"author": {
-		"name": "David Kudera",
-		"email": "sakren@gmail.com"
-	},
-	"keywords": [
-		"file",
-		"fs",
-		"finder",
-		"recursive",
-		"walk"
-	],
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:sakren/node-fs-finder.git"
-	},
-	"license": "MIT",
-	"engines": {
-		"node": ">=0.9"
-	},
-	"main": "./lib/Finder.js",
-	"dependencies": {
-		"moment": "~2.5.0",
-		"operator-compare": "~1.0.1",
-		"escape-regexp": "~0.0.1",
-		"q": "~1.0.0",
-		"async": "~0.2.9"
-	},
-	"devDependencies": {
-		"chai": "~1.8.1",
-		"fs-mock": "~1.0.1",
-		"mocha": "~1.17.0"
-	},
-	"scripts": {
-		"build-and-test": "npm run build && npm run test",
-		"test": "mocha ./test/index.js --reporter spec",
-		"build": "coffee -co ./test/lib ./test/src"
-	}
+  "name": "fs-finder",
+  "description": "File system recursive finder",
+  "version": "1.8.0",
+  "author": {
+    "name": "David Kudera",
+    "email": "sakren@gmail.com"
+  },
+  "keywords": [
+    "file",
+    "fs",
+    "finder",
+    "recursive",
+    "walk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:sakren/node-fs-finder.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.9"
+  },
+  "main": "./lib/Finder.js",
+  "dependencies": {
+    "moment": "~2.5.0",
+    "operator-compare": "~1.0.1",
+    "escape-regexp": "~0.0.1",
+    "q": "~1.0.0",
+    "async": "~0.2.9"
+  },
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "coffee-script": "1.6.3",
+    "fs-mock": "~1.0.1",
+    "mocha": "~1.17.0"
+  },
+  "scripts": {
+    "build": "coffee -co ./lib ./src",
+    "build-test": "coffee -co ./test/lib ./test/src",
+    "build-and-test": "npm run build-test && npm run test",
+    "test": "mocha ./test/index.js --reporter spec",
+    "watch": "coffee --watch -co ./lib ./src"
+  }
 }

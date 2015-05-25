@@ -1,5 +1,8 @@
 escape = require 'escape-regexp'
 path = require 'path'
+os = require 'os'
+
+FSRootPath = if os.platform() is 'win32' then process.cwd().split(path.sep)[0] + path.sep else '/'
 
 class Helpers
 
@@ -58,7 +61,7 @@ class Helpers
 
 		current = _path
 		result = [current]
-		while current != '/'
+		while current != FSRootPath
 			result.push(path.dirname(current))
 			current = path.dirname(current)
 
