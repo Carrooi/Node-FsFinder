@@ -31,12 +31,15 @@
 	},
 	"devDependencies": {
 		"chai": "~1.8.1",
+		"coffee-script": "^1.9.2",
 		"fs-mock": "~1.0.1",
 		"mocha": "~1.17.0"
 	},
 	"scripts": {
-		"build-and-test": "npm run build && npm run test",
+		"build": "coffee -co ./lib ./src",
+		"build-test": "coffee -co ./test/lib ./test/src",
+		"build-and-test": "npm run build-test && npm run test",
 		"test": "mocha ./test/index.js --reporter spec",
-		"build": "coffee -co ./test/lib ./test/src"
+		"watch": "coffee --watch -co ./lib ./src"
 	}
 }
