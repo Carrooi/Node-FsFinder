@@ -1,12 +1,20 @@
-[![NPM version](https://badge.fury.io/js/fs-finder.png)](http://badge.fury.io/js/fs-finder)
-[![Dependency Status](https://gemnasium.com/sakren/node-fs-finder.png)](https://gemnasium.com/sakren/node-fs-finder)
-[![Build Status](https://travis-ci.org/sakren/node-fs-finder.png?branch=master)](https://travis-ci.org/sakren/node-fs-finder)
+[![NPM version](https://img.shields.io/npm/v/fs-finder.svg?style=flat-square)](http://badge.fury.io/js/fs-finder)
+[![Dependency Status](https://img.shields.io/gemnasium/Carrooi/Node-FsFinder.svg?style=flat-square)](https://gemnasium.com/Carrooi/Node-FsFinder)
+[![Build Status](https://img.shields.io/travis/Carrooi/Node-FsFinder.svg?style=flat-square)](https://travis-ci.org/Carrooi/Node-FsFinder)
 
-[![Donate](http://b.repl.ca/v1/donate-PayPal-brightgreen.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2CQPWKW8D3BWS)
+[![Donate](https://img.shields.io/badge/donate-PayPal-brightgreen.svg?style=flat-square)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2CQPWKW8D3BWS)
 
 # fs-finder
 
 File system finder inspired by finder in [Nette framework](http://doc.nette.org/en/finder).
+
+## Help
+
+Unfortunately I don't have any more time to maintain this repository :-( 
+
+Don't you want to save me and this project by taking over it?
+
+![sad cat](https://raw.githubusercontent.com/sakren/sakren.github.io/master/images/sad-kitten.jpg)
 
 ## Installing
 
@@ -225,6 +233,10 @@ afterEach(function() {
 In fs variable is now mocked fs module, so if you need to use fs module in your tests, just use this one.
 
 ## Changelog
+
+* 1.8.1
+	+ Move under Carrooi organization
+	+ Abandon package
 
 * 1.8.0
 	+ Added asynchronous searching

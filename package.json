@@ -1,10 +1,10 @@
 {
 	"name": "fs-finder",
-	"description": "File system recursive finder",
-	"version": "1.8.0",
+	"description": "[ABANDONED] File system recursive finder",
+	"version": "1.8.1",
 	"author": {
 		"name": "David Kudera",
-		"email": "sakren@gmail.com"
+		"email": "kudera.d@gmail.com"
 	},
 	"keywords": [
 		"file",
@@ -15,7 +15,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:sakren/node-fs-finder.git"
+		"url": "git@github.com:Carrooi/Node-FsFinder.git"
 	},
 	"license": "MIT",
 	"engines": {
@@ -40,3 +40,4 @@
 		"build": "coffee -co ./test/lib ./test/src"
 	}
 }
+
