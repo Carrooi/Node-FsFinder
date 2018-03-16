@@ -23,7 +23,7 @@
 	},
 	"main": "./lib/Finder.js",
 	"dependencies": {
-		"moment": "~2.5.0",
+		"moment": "^2.5.0",
 		"operator-compare": "~1.0.1",
 		"escape-regexp": "~0.0.1",
 		"q": "~1.0.0",
