@@ -29,6 +29,9 @@
 		"q": "~1.0.0",
 		"async": "^2.6.4"
 	},
+	"overrides": {
+		"minimatch": "3.0.2",
+	},
 	"devDependencies": {
 		"chai": "~1.8.1",
 		"fs-mock": "~1.0.1",
