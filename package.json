@@ -23,7 +23,7 @@
 	},
 	"main": "./lib/Finder.js",
 	"dependencies": {
-		"async": "^2.6.4",
+		"async": "2.6.4",
 		"escape-regexp": "~0.0.1",
 		"moment": "^2.26.0",
 		"operator-compare": "~1.0.1",
