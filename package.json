@@ -1,7 +1,7 @@
 {
 	"name": "fs-finder",
 	"description": "[ABANDONED] File system recursive finder",
-	"version": "1.8.2",
+	"version": "1.8.4",
 	"author": {
 		"name": "David Kudera",
 		"email": "kudera.d@gmail.com"
@@ -25,7 +25,7 @@
 	"dependencies": {
 		"async": "2.6.4",
 		"escape-regexp": "~0.0.1",
-		"moment": "^2.26.0",
+		"moment": "^2.29.3",
 		"operator-compare": "~1.0.1",
 		"q": "~1.0.0"
 	},
