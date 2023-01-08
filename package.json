@@ -1,7 +1,7 @@
 {
 	"name": "fs-finder",
 	"description": "[ABANDONED] File system recursive finder",
-	"version": "1.8.1",
+	"version": "1.8.5",
 	"author": {
 		"name": "David Kudera",
 		"email": "kudera.d@gmail.com"
@@ -23,16 +23,21 @@
 	},
 	"main": "./lib/Finder.js",
 	"dependencies": {
-		"moment": "^2.5.0",
-		"operator-compare": "~1.0.1",
+		"async": "2.6.4",
 		"escape-regexp": "~0.0.1",
-		"q": "~1.0.0",
-		"async": "~0.2.9"
+		"moment": "^2.29.4",
+		"operator-compare": "~1.0.1",
+		"q": "~1.0.0"
+	},
+	"overrides": {
+		"ansi-regex": "5.0.1",
+		"json-schema": "0.4.0",
+		"minimatch": "5.1.0"
 	},
 	"devDependencies": {
-		"chai": "~1.8.1",
+		"chai": "~4.3.7",
 		"fs-mock": "~1.0.1",
-		"mocha": "~1.17.0"
+		"mocha": "^10.1.0"
 	},
 	"scripts": {
 		"build-and-test": "npm run build && npm run test",
@@ -40,4 +45,3 @@
 		"build": "coffee -co ./test/lib ./test/src"
 	}
 }
-
